@@ -63,9 +63,17 @@
     .topbar-meta{
         margin-left:auto;font-family:var(--font-mono);font-size:9px;
         letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;
-        text-align:right;max-width:52%;
+        text-align:right;max-width:38%;
         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     }
+    .plan-pill{
+        flex:none;font-family:var(--font-mono);font-size:8px;font-weight:700;
+        letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+        background:var(--surface-2);color:var(--text-3);border:1px solid var(--line);
+        border-radius:99px;padding:4px 9px;margin-left:8px;
+        transition:background .18s,color .18s,border-color .18s;
+    }
+    body[data-pro="1"] .plan-pill{background:rgba(217,242,75,.12);color:var(--lane);border-color:var(--lane-dim);}
 
     .view{
         display:none;
@@ -337,7 +345,7 @@
     body[data-running="1"] .dot{background:var(--lane);animation:pulse 1.1s ease-in-out infinite;}
     @keyframes pulse{50%{opacity:.25}}
 
-    .section-head{display:flex;align-items:center;gap:9px;margin:16px 0 9px;}
+    .section-head{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:16px 0 9px;}
     .section-head h2{flex:none;}
     .count-pill{
         font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text-3);
@@ -483,9 +491,78 @@
     .sheet p{color:var(--text-2);font-size:13px;margin-bottom:16px;}
     .sheet-actions{display:flex;flex-direction:column;gap:7px;}
     .sheet-actions .btn{width:100%;}
+    #sheet-input-wrap .input{margin-bottom:2px;}
+
+    /* Larger sheet variant for feature lists / history, with internal scroll */
+    .sheet-lg{max-height:82vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+    .feature-list{display:flex;flex-direction:column;gap:11px;margin-bottom:4px;}
+    .feature-row{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text-2);}
+    .feature-row small{color:var(--text-3);}
+    .feature-check{
+        flex:none;width:20px;height:20px;border-radius:50%;margin-top:1px;
+        background:rgba(217,242,75,.14);color:var(--lane);
+        display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+    }
+    .demo-note{margin-top:14px;font-size:11px;color:var(--text-3);text-align:center;}
+
+    /* Saved rosters (named, reusable) */
+    .saved-row{
+        display:flex;align-items:center;gap:8px;background:var(--surface);
+        border:1px solid var(--line-soft);border-radius:var(--r-md);
+        padding:9px 6px 9px 14px;margin-bottom:8px;
+    }
+    .saved-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:15px;}
+    .saved-num{font-family:var(--font-mono);font-size:10px;color:var(--text-3);flex:none;}
+    .saved-load{
+        background:var(--surface-2);border:1px solid var(--line);color:var(--text);
+        border-radius:8px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;
+        flex:none;font-family:var(--font-body);min-height:38px;
+    }
+    .saved-del{
+        background:none;border:none;color:var(--text-3);font-size:14px;cursor:pointer;
+        min-width:40px;min-height:40px;flex:none;display:flex;align-items:center;justify-content:center;
+    }
+    .saved-del:active{color:var(--clay);}
+
+    /* Race history cards (Pro) */
+    .history-card{
+        background:var(--surface);border:1px solid var(--line-soft);
+        border-radius:var(--r-md);margin-bottom:8px;overflow:hidden;
+    }
+    .history-head{
+        display:flex;align-items:center;gap:10px;width:100%;padding:12px 12px;
+        background:none;border:none;color:var(--text);text-align:left;cursor:pointer;
+        font-family:var(--font-body);
+    }
+    .history-name{
+        font-family:var(--font-display);font-size:17px;font-weight:700;
+        letter-spacing:.02em;text-transform:uppercase;flex:1;min-width:0;
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .history-meta{font-family:var(--font-mono);font-size:9px;color:var(--text-3);flex:none;text-align:right;line-height:1.5;}
+    .history-body{display:none;padding:0 12px 12px;border-top:1px solid var(--line-soft);}
+    .history-card[data-open="1"] .history-body{display:block;padding-top:10px;}
+
+    /* Printable results sheet, used only for PDF export via window.print() */
+    #print-area{display:none;}
+    @media print{
+        body *{visibility:hidden;}
+        #print-area, #print-area *{visibility:visible;}
+        #print-area{
+            display:block !important;position:absolute;left:0;top:0;width:100%;
+            background:#fff;padding:24px;
+        }
+    }
+    #print-area h1{font-family:var(--font-display);font-size:22px;color:#111;margin-bottom:4px;}
+    #print-area p{font-family:var(--font-body);font-size:12px;color:#444;margin-bottom:14px;}
+    #print-area table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:11px;color:#111;}
+    #print-area th{text-align:left;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#666;padding:6px 8px;border-bottom:2px solid #ccc;}
+    #print-area td{padding:7px 8px;border-bottom:1px solid #ddd;vertical-align:top;}
+    #print-area .pdf-splits{color:#666;font-size:10px;}
 </style>
 </head>
-<body data-view="timer" data-running="0" data-cta="0">
+<body data-view="pace" data-running="0" data-cta="0">
 
 <header class="topbar">
     <svg class="brandmark" viewBox="0 0 24 24" aria-hidden="true">
@@ -497,12 +574,16 @@
     </svg>
     <div class="wordmark">SPLIT<span>S</span></div>
     <div class="topbar-meta" id="topbar-meta">Race timer</div>
+    <button class="plan-pill" id="plan-pill" aria-label="View plan and upgrade">FREE</button>
 </header>
 
 <!-- ============ TIMER ============ -->
-<main id="view-timer" class="view active">
+<main id="view-timer" class="view">
     <section id="setup">
-        <div class="page-head"><h1>Race Setup</h1></div>
+        <div class="page-head">
+            <h1>Race Setup</h1>
+            <button class="btn btn-ghost" id="btn-history" style="margin-left:auto;flex:none;padding:6px 12px;font-size:12px;min-height:0">History</button>
+        </div>
 
         <div class="field">
             <span class="field-label">Race distance</span>
@@ -515,7 +596,7 @@
         </div>
 
         <div class="field" style="margin-top:16px">
-            <label class="field-label" for="new-runner">Roster <span id="roster-count" style="color:var(--text-2)"></span></label>
+            <label class="field-label" for="new-runner">Today's Roster <span id="roster-count" style="color:var(--text-2)"></span></label>
             <div class="add-row">
                 <input class="input" id="new-runner" placeholder="Athlete name" autocomplete="off"
                        enterkeyhint="done" autocapitalize="words">
@@ -524,7 +605,17 @@
         </div>
 
         <div class="roster" id="roster"></div>
-        <div class="empty" id="roster-empty">Add athletes one at a time, or paste a list separated by commas or line breaks.</div>
+        <div class="empty" id="roster-empty">Add athletes one at a time, or paste a list separated by commas or line breaks. This list is saved automatically on this device.</div>
+        <button class="btn btn-ghost" id="btn-clear-roster" style="display:none;width:100%;margin-top:2px;padding:11px;font-size:13px">Clear this roster</button>
+
+        <div class="section-head" style="margin-top:24px">
+            <h2>Saved Rosters</h2>
+            <span class="count-pill" id="saved-count">0 / 3</span>
+            <span class="spacer"></span>
+            <button class="btn btn-ghost" id="btn-save-roster" style="padding:7px 12px;font-size:12px;min-height:0">Save current</button>
+        </div>
+        <div id="saved-rosters-list"></div>
+        <div class="empty" id="saved-rosters-empty">Save this list under a name — like "Varsity Girls" — to load it instantly next practice.</div>
     </section>
 
     <section id="live" style="display:none">
@@ -568,6 +659,9 @@
         <div class="section-head">
             <h2>Results</h2>
             <span class="count-pill" id="count-fin">0</span>
+            <span class="spacer"></span>
+            <button class="btn btn-ghost" id="btn-export-csv" style="padding:7px 11px;font-size:12px;min-height:0">CSV</button>
+            <button class="btn btn-ghost" id="btn-export-pdf" style="padding:7px 11px;font-size:12px;min-height:0">PDF</button>
         </div>
         <div class="lane-list" id="result-list"></div>
         <div class="empty" id="result-empty">Finishers appear here, fastest first.</div>
@@ -575,7 +669,7 @@
 </main>
 
 <!-- ============ PACE ============ -->
-<main id="view-pace" class="view">
+<main id="view-pace" class="view active">
     <div class="page-head">
         <h1>Pace</h1>
         <span class="sub">Tap a race for mile splits</span>
@@ -611,24 +705,59 @@
 
 <nav class="tabbar">
     <div class="tabbar-inner">
-        <button class="tab" id="tab-timer" aria-current="true">
-            <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6zm-4 13h2V8h-2zm8.03-6.61 1.42-1.42a10 10 0 0 0-1.4-1.4l-1.43 1.42A9 9 0 1 0 20 13a8.9 8.9 0 0 0-.97-4.61M12 20a7 7 0 1 1 7-7 7 7 0 0 1-7 7"/></svg>Timer
-        </button>
-        <button class="tab" id="tab-pace" aria-current="false">
+        <button class="tab" id="tab-pace" aria-current="true">
             <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2m0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8m4.24-12.24L11 13l-3.24 3.24 1.06 1.06L12 15l5.3-6.18z"/></svg>Pace
+        </button>
+        <button class="tab" id="tab-timer" aria-current="false">
+            <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6zm-4 13h2V8h-2zm8.03-6.61 1.42-1.42a10 10 0 0 0-1.4-1.4l-1.43 1.42A9 9 0 1 0 20 13a8.9 8.9 0 0 0-.97-4.61M12 20a7 7 0 1 1 7-7 7 7 0 0 1-7 7"/></svg>Timer
         </button>
     </div>
 </nav>
 
 <div class="toast" id="toast"></div>
 
+<div id="print-area"></div>
+
 <div class="scrim" id="scrim">
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
         <h3 id="sheet-title">Reset the race?</h3>
         <p id="sheet-body">Every split recorded so far will be cleared.</p>
+        <div class="field" id="sheet-input-wrap" style="display:none">
+            <input class="input" id="sheet-input" placeholder="">
+        </div>
         <div class="sheet-actions">
             <button class="btn btn-clay" id="sheet-yes">Reset race</button>
             <button class="btn btn-ghost" id="sheet-no">Keep timing</button>
+        </div>
+    </div>
+</div>
+
+<div class="scrim" id="scrim-upgrade">
+    <div class="sheet sheet-lg" role="dialog" aria-modal="true" aria-labelledby="upgrade-title">
+        <h3 id="upgrade-title">Splits Pro</h3>
+        <p id="upgrade-sub">You're on the free plan.</p>
+        <div class="feature-list">
+            <div class="feature-row"><span class="feature-check">✓</span><span>Unlimited saved rosters <small>(free plan: 3)</small></span></div>
+            <div class="feature-row"><span class="feature-check">✓</span><span>Season history — name and keep every race, forever</span></div>
+            <div class="feature-row"><span class="feature-check">✓</span><span>CSV and PDF export</span></div>
+        </div>
+        <div class="sheet-actions" style="margin-top:18px">
+            <button class="btn btn-lane" id="btn-go-pro">Unlock Pro (demo)</button>
+            <button class="btn btn-ghost" id="btn-go-free" style="display:none">Switch to free (demo)</button>
+            <button class="btn btn-ghost" id="upgrade-close">Not now</button>
+        </div>
+        <p class="demo-note">Demo toggle — connect this to real billing (Stripe, RevenueCat, etc.) before launch.</p>
+    </div>
+</div>
+
+<div class="scrim" id="scrim-history">
+    <div class="sheet sheet-lg" role="dialog" aria-modal="true" aria-labelledby="history-title">
+        <h3 id="history-title">Race History</h3>
+        <p id="history-sub">Saved races from this device.</p>
+        <div id="history-list"></div>
+        <div class="empty" id="history-empty" style="display:none">No saved races yet.</div>
+        <div class="sheet-actions" style="margin-top:16px">
+            <button class="btn btn-ghost" id="history-close">Close</button>
         </div>
     </div>
 </div>
@@ -849,6 +978,227 @@ $('chips-split').addEventListener('click', e => {
 });
 renderChips();
 
+/* ---- Roster persistence: remembers the squad on this device ---- */
+const ROSTER_KEY = 'splits_roster_v1';
+function saveRoster(){
+    try{ localStorage.setItem(ROSTER_KEY, JSON.stringify(roster.map(r => r.name))); }
+    catch(e){ /* private browsing / storage disabled — fail silently */ }
+}
+function loadRoster(){
+    try{
+        const raw = localStorage.getItem(ROSTER_KEY);
+        if (!raw) return;
+        const names = JSON.parse(raw);
+        if (Array.isArray(names)){
+            roster = names.filter(n => typeof n === 'string' && n.trim())
+                          .map(n => ({ id: uid++, name: n.trim() }));
+        }
+    } catch(e){ /* corrupt or blocked storage — start empty */ }
+}
+
+/* ================= PLAN: free vs pro ================= */
+const PRO_KEY = 'splits_pro_v1';
+const FREE_ROSTER_LIMIT = 3;
+let isPro = false;
+function loadPro(){
+    try{ isPro = localStorage.getItem(PRO_KEY) === '1'; } catch(e){ isPro = false; }
+}
+function setPro(val){
+    isPro = val;
+    try{ localStorage.setItem(PRO_KEY, val ? '1' : '0'); } catch(e){}
+    document.body.dataset.pro = val ? '1' : '0';
+    $('plan-pill').textContent = val ? 'PRO' : 'FREE';
+    $('upgrade-sub').textContent = val ? "You're on Splits Pro." : "You're on the free plan.";
+    $('btn-go-pro').style.display = val ? 'none' : 'block';
+    $('btn-go-free').style.display = val ? 'block' : 'none';
+    renderSavedRosters();
+    renderExportButtons();
+}
+function openUpgradeSheet(){ $('scrim-upgrade').classList.add('show'); }
+function closeUpgradeSheet(){ $('scrim-upgrade').classList.remove('show'); }
+$('plan-pill').addEventListener('click', openUpgradeSheet);
+$('upgrade-close').addEventListener('click', closeUpgradeSheet);
+$('scrim-upgrade').addEventListener('click', e => { if (e.target === $('scrim-upgrade')) closeUpgradeSheet(); });
+$('btn-go-pro').addEventListener('click', () => { setPro(true); closeUpgradeSheet(); toast('Pro unlocked (demo)'); });
+$('btn-go-free').addEventListener('click', () => { setPro(false); closeUpgradeSheet(); toast('Switched to free (demo)'); });
+
+function requirePro(featureLabel, action){
+    if (isPro){ action(); return; }
+    openSheet({
+        title: 'That\u2019s a Pro feature',
+        body: `${featureLabel} is included with Splits Pro.`,
+        yesLabel: 'See Pro', yesClass: 'btn-lane',
+        onConfirm: openUpgradeSheet
+    });
+}
+function renderExportButtons(){
+    const lock = isPro ? '' : '🔒 ';
+    $('btn-export-csv').textContent = lock + 'CSV';
+    $('btn-export-pdf').textContent = lock + 'PDF';
+}
+
+/* ================= SAVED ROSTERS: named, reusable rosters ================= */
+const SAVED_ROSTERS_KEY = 'splits_saved_rosters_v1';
+let savedRosters = [];
+let sRosterUid = 0;
+function loadSavedRosters(){
+    try{
+        const raw = localStorage.getItem(SAVED_ROSTERS_KEY);
+        if (!raw) return;
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)){
+            savedRosters = arr
+                .filter(x => x && typeof x.name === 'string' && Array.isArray(x.athletes))
+                .map(x => ({ id: sRosterUid++, name: x.name, athletes: x.athletes.filter(n => typeof n === 'string') }));
+        }
+    } catch(e){ /* corrupt or blocked storage */ }
+}
+function persistSavedRosters(){
+    try{
+        localStorage.setItem(SAVED_ROSTERS_KEY, JSON.stringify(savedRosters.map(r => ({ name: r.name, athletes: r.athletes }))));
+    } catch(e){}
+}
+function renderSavedRosters(){
+    $('saved-count').textContent = isPro ? `${savedRosters.length}` : `${savedRosters.length} / ${FREE_ROSTER_LIMIT}`;
+    $('saved-rosters-empty').style.display = savedRosters.length ? 'none' : 'block';
+    $('saved-rosters-list').innerHTML = savedRosters.map(r => `
+        <div class="saved-row">
+            <span class="saved-name">${esc(r.name)}</span>
+            <span class="saved-num">${r.athletes.length}</span>
+            <button class="saved-load" data-load="${r.id}">Load</button>
+            <button class="saved-del" data-del-saved="${r.id}" aria-label="Delete ${esc(r.name)}">✕</button>
+        </div>`).join('');
+}
+$('saved-rosters-list').addEventListener('click', e => {
+    const loadBtn = e.target.closest('[data-load]');
+    const delBtn = e.target.closest('[data-del-saved]');
+    if (loadBtn) doLoadSavedRoster(+loadBtn.dataset.load);
+    if (delBtn) doDeleteSavedRoster(+delBtn.dataset.delSaved);
+});
+function doLoadSavedRoster(id){
+    const sr = savedRosters.find(r => r.id === id);
+    if (!sr) return;
+    const apply = () => {
+        roster = sr.athletes.map(n => ({ id: uid++, name: n }));
+        renderRoster();
+        toast(`Loaded "${sr.name}"`);
+    };
+    if (roster.length){
+        openSheet({
+            title: 'Replace current roster?',
+            body: `Loading "${sr.name}" will replace the ${roster.length} athlete${roster.length === 1 ? '' : 's'} currently listed.`,
+            yesLabel: 'Load roster', yesClass: 'btn-lane',
+            onConfirm: apply
+        });
+    } else apply();
+}
+function doDeleteSavedRoster(id){
+    const sr = savedRosters.find(r => r.id === id);
+    if (!sr) return;
+    openSheet({
+        title: 'Delete saved roster?',
+        body: `"${sr.name}" (${sr.athletes.length} athletes) will be removed from this device.`,
+        yesLabel: 'Delete', yesClass: 'btn-clay',
+        onConfirm: () => {
+            savedRosters = savedRosters.filter(r => r.id !== id);
+            persistSavedRosters(); renderSavedRosters();
+            toast('Roster deleted');
+        }
+    });
+}
+$('btn-save-roster').addEventListener('click', () => {
+    if (!roster.length){ toast('Add athletes to the roster first'); return; }
+    if (!isPro && savedRosters.length >= FREE_ROSTER_LIMIT){
+        openSheet({
+            title: 'Free plan limit reached',
+            body: `Free saves up to ${FREE_ROSTER_LIMIT} rosters. Splits Pro gives you unlimited saved rosters.`,
+            yesLabel: 'See Pro', yesClass: 'btn-lane',
+            onConfirm: openUpgradeSheet
+        });
+        return;
+    }
+    openSheet({
+        title: 'Save this roster',
+        body: 'Give it a name you\u2019ll recognize next season, like a squad or event group.',
+        showInput: true, inputPlaceholder: 'e.g. Varsity Girls', inputValue: '',
+        yesLabel: 'Save roster', yesClass: 'btn-lane',
+        onConfirm: (name) => {
+            const clean = (name || '').trim();
+            if (!clean){ toast('Give the roster a name'); return; }
+            savedRosters.push({ id: sRosterUid++, name: clean, athletes: roster.map(r => r.name) });
+            persistSavedRosters(); renderSavedRosters();
+            toast(`Saved "${clean}"`);
+        }
+    });
+});
+
+/* ================= HISTORY: saved race results (Pro) ================= */
+const HISTORY_KEY = 'splits_history_v1';
+let history = [];
+let hUid = 0;
+function loadHistory(){
+    try{
+        const raw = localStorage.getItem(HISTORY_KEY);
+        if (!raw) return;
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) history = arr.map(x => ({ ...x, id: hUid++ }));
+    } catch(e){ /* corrupt or blocked storage */ }
+}
+function persistHistory(){
+    try{
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history.map(({ id, ...rest }) => rest)));
+    } catch(e){}
+}
+function saveRaceToHistory(name){
+    const rd = DISTS.find(d => d.v === raceDist);
+    const today = new Date();
+    history.unshift({
+        id: hUid++,
+        name,
+        distanceLabel: rd ? rd.label : 'Race',
+        dateISO: today.toISOString(),
+        dateStr: today.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+        results: [...finished].reverse().map(r => ({ name: r.name, finishStr: fmtMs(r.finish) }))
+    });
+    persistHistory();
+    toast('Race saved to history');
+}
+function openHistorySheet(){ renderHistoryList(); $('scrim-history').classList.add('show'); }
+function closeHistorySheet(){ $('scrim-history').classList.remove('show'); }
+function renderHistoryList(){
+    $('history-empty').style.display = history.length ? 'none' : 'block';
+    $('history-sub').textContent = isPro
+        ? 'Saved races from this device.'
+        : 'Splits Pro saves every race automatically. On the free plan, results clear when you reset.';
+    const sorted = [...history].sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+    $('history-list').innerHTML = sorted.map(h => {
+        const rows = h.results.map((r, i) => `
+            <div class="result" data-place="${i + 1}" style="margin-bottom:6px">
+                <div class="result-top">
+                    <span class="place">${i + 1}</span>
+                    <span class="result-name">${esc(r.name)}</span>
+                    <span class="result-time">${r.finishStr}</span>
+                </div>
+            </div>`).join('');
+        return `<div class="history-card" data-hid="${h.id}">
+            <button class="history-head" data-toggle="${h.id}">
+                <span class="history-name">${esc(h.name)}</span>
+                <span class="history-meta">${esc(h.distanceLabel)} · ${esc(h.dateStr)}<br>${h.results.length} finished</span>
+            </button>
+            <div class="history-body">${rows}</div>
+        </div>`;
+    }).join('');
+}
+$('history-list').addEventListener('click', e => {
+    const t = e.target.closest('[data-toggle]');
+    if (!t) return;
+    const card = t.closest('.history-card');
+    card.dataset.open = card.dataset.open === '1' ? '0' : '1';
+});
+$('btn-history').addEventListener('click', openHistorySheet);
+$('history-close').addEventListener('click', closeHistorySheet);
+$('scrim-history').addEventListener('click', e => { if (e.target === $('scrim-history')) closeHistorySheet(); });
+
 function addRunner(){
     const el = $('new-runner');
     const raw = el.value.trim();
@@ -874,6 +1224,8 @@ function renderRoster(){
         </div>`).join('');
     $('roster-empty').style.display = roster.length ? 'none' : 'block';
     $('roster-count').textContent = roster.length ? `· ${roster.length}` : '';
+    $('btn-clear-roster').style.display = roster.length ? 'block' : 'none';
+    saveRoster();
     syncCTA();
 }
 $('roster').addEventListener('click', e => {
@@ -882,6 +1234,11 @@ $('roster').addEventListener('click', e => {
 });
 $('btn-add').addEventListener('click', addRunner);
 $('new-runner').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addRunner(); } });
+$('btn-clear-roster').addEventListener('click', () => {
+    askSheet('Clear this roster?', 'This clears today\u2019s working list from this device. Saved rosters below are not affected.', 'Clear roster', () => {
+        roster = []; renderRoster(); toast('Roster cleared');
+    });
+});
 
 function syncCTA(){
     const show = document.body.dataset.view === 'timer' && !liveOn() && roster.length > 0;
@@ -961,19 +1318,43 @@ function toggleTimer(){
 }
 $('btn-run').addEventListener('click', toggleTimer);
 
-let sheetCb = null;
-function askSheet(title, body, yesLabel, cb){
+let sheetCb = null, sheetCancelCb = null;
+function openSheet(opts){
+    const {
+        title, body = '', yesLabel = 'Confirm', noLabel = 'Cancel', yesClass = 'btn-clay',
+        showInput = false, inputPlaceholder = '', inputValue = '', onConfirm, onCancel
+    } = opts;
     $('sheet-title').textContent = title;
     $('sheet-body').textContent = body;
+    $('sheet-body').style.display = body ? 'block' : 'none';
     $('sheet-yes').textContent = yesLabel;
-    sheetCb = cb;
+    $('sheet-yes').className = 'btn ' + yesClass;
+    $('sheet-no').textContent = noLabel;
+    $('sheet-input-wrap').style.display = showInput ? 'block' : 'none';
+    if (showInput){
+        $('sheet-input').value = inputValue;
+        $('sheet-input').placeholder = inputPlaceholder;
+    }
+    sheetCb = () => onConfirm && onConfirm(showInput ? $('sheet-input').value : undefined);
+    sheetCancelCb = onCancel || null;
     $('scrim').classList.add('show');
+    if (showInput) setTimeout(() => { $('sheet-input').focus(); $('sheet-input').select(); }, 60);
 }
-function closeSheet(){ $('scrim').classList.remove('show'); sheetCb = null; }
-$('sheet-no').addEventListener('click', closeSheet);
+function askSheet(title, body, yesLabel, cb){
+    openSheet({ title, body, yesLabel, yesClass: 'btn-clay', onConfirm: cb });
+}
+function closeSheet(){ $('scrim').classList.remove('show'); sheetCb = null; sheetCancelCb = null; }
+$('sheet-no').addEventListener('click', () => { const cb = sheetCancelCb; closeSheet(); if (cb) cb(); });
 $('scrim').addEventListener('click', e => { if (e.target === $('scrim')) closeSheet(); });
 $('sheet-yes').addEventListener('click', () => { const cb = sheetCb; closeSheet(); if (cb) cb(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+$('sheet-input').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('sheet-yes').click(); } });
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape'){
+        if ($('scrim').classList.contains('show')) closeSheet();
+        if ($('scrim-upgrade').classList.contains('show')) closeUpgradeSheet();
+        if ($('scrim-history').classList.contains('show')) closeHistorySheet();
+    }
+});
 
 function doReset(){
     running = false;
@@ -988,7 +1369,28 @@ function doReset(){
 $('btn-reset').addEventListener('click', () => {
     const dirty = finished.length > 0 || active.some(r => r.idx > 0) || running || elapsed > 0;
     if (!dirty){ doReset(); return; }
-    askSheet('Reset the race?', 'Every split recorded so far will be cleared. This cannot be undone.', 'Reset race', doReset);
+
+    if (isPro && finished.length){
+        const rd = DISTS.find(d => d.v === raceDist);
+        const today = new Date();
+        const defaultName = `${rd ? rd.label : 'Race'} · ${today.toLocaleDateString(undefined, { month:'short', day:'numeric' })}`;
+        openSheet({
+            title: 'Save this race?',
+            body: 'Name it to keep it in your season history, or discard the results.',
+            showInput: true, inputValue: defaultName, inputPlaceholder: 'Race name',
+            yesLabel: 'Save & reset', yesClass: 'btn-lane', noLabel: 'Discard results',
+            onConfirm: (name) => {
+                saveRaceToHistory((name || '').trim() || defaultName);
+                doReset();
+            },
+            onCancel: doReset
+        });
+    } else {
+        const body = isPro
+            ? 'Every split recorded so far will be cleared. This cannot be undone.'
+            : 'Every split recorded so far will be cleared. This cannot be undone. Splits Pro saves race results to a permanent history.';
+        askSheet('Reset the race?', body, 'Reset race', doReset);
+    }
 });
 
 const now = () => running ? elapsed + (Date.now() - t0) : elapsed;
@@ -1137,6 +1539,55 @@ function renderResults(){
     }).join('');
 }
 
+function exportCSV(){
+    if (!finished.length){ toast('No finishers yet'); return; }
+    const head = 'Place,Athlete,' + checkpoints.map(c => `"${cpLabel(c)}"`).join(',') + ',Final\n';
+    const rows = [...finished].reverse().map((r, i) => {
+        const cells = checkpoints.map(c => {
+            const s = r.splits.find(x => Math.abs(x.dist - c) < .01);
+            return s ? fmtMs(s.time) : '';
+        });
+        return `${i + 1},"${r.name.replace(/"/g,'""')}",${cells.join(',')},${fmtMs(r.finish)}`;
+    }).join('\n');
+    const rd = DISTS.find(d => d.v === raceDist);
+    const stamp = new Date().toISOString().slice(0, 10);
+    const name = `${(rd ? rd.label : 'race').toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${stamp}`;
+    const blob = new Blob([head + rows], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${name}-splits.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('CSV downloaded');
+}
+
+function exportPDF(){
+    if (!finished.length){ toast('No finishers yet'); return; }
+    const rd = DISTS.find(d => d.v === raceDist);
+    const stamp = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    const rows = [...finished].reverse().map((r, i) => {
+        const splitsStr = r.splits.map(s => `${cpShort(s.dist)} ${fmtMs(s.time, false)}`).join(' &middot; ');
+        return `<tr>
+            <td>${i + 1}</td>
+            <td>${esc(r.name)}</td>
+            <td>${fmtMs(r.finish)}</td>
+            <td class="pdf-splits">${splitsStr}</td>
+        </tr>`;
+    }).join('');
+    $('print-area').innerHTML = `
+        <h1>${rd ? rd.label : 'Race'} Results</h1>
+        <p>${stamp} &middot; ${finished.length} finisher${finished.length === 1 ? '' : 's'}</p>
+        <table>
+            <thead><tr><th>Place</th><th>Athlete</th><th>Final</th><th>Splits</th></tr></thead>
+            <tbody>${rows}</tbody>
+        </table>`;
+    window.print();
+}
+window.addEventListener('afterprint', () => { $('print-area').innerHTML = ''; });
+
+$('btn-export-csv').addEventListener('click', () => requirePro('CSV export', exportCSV));
+$('btn-export-pdf').addEventListener('click', () => requirePro('PDF export', exportPDF));
+
 
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && running){ cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }
@@ -1153,8 +1604,14 @@ window.addEventListener('beforeunload', e => {
     if (running || finished.length || active.some(r => r.idx > 0)){ e.preventDefault(); e.returnValue = ''; }
 });
 
+loadPro();
+loadSavedRosters();
+loadHistory();
+loadRoster();
 renderRoster();
-go('timer');
+renderSavedRosters();
+setPro(isPro);
+go('pace');
 </script>
 </body>
 </html>
