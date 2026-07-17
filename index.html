@@ -2,1090 +2,1159 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Runner's Toolkit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0B0D0C">
+<title>Splits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --bg-color: #000000;
-        --text-color: #ffffff;
-        --text-secondary: #8e8e93;
-        --accent-color: #0a84ff;
-        --accent-hover: #0070df;
-        --success-color: #32d74b;
-        --danger-color: #ff453a;
-        --glass-bg: rgba(28, 28, 30, 0.6);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    :root{
+        --ink:#0B0D0C;
+        --ink-2:#141816;
+        --surface:#171C1A;
+        --surface-2:#1F2523;
+        --line:#2C3532;
+        --line-soft:#232A28;
+
+        --text:#F2F5F3;
+        --text-2:#8D9A95;
+        --text-3:#5E6A66;
+
+        --lane:#D9F24B;
+        --lane-dim:#A8BE2F;
+        --clay:#C4553A;
+        --chalk:#E8EDE9;
+
+        --font-display:"Barlow Condensed", Impact, sans-serif;
+        --font-body:"Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono:"JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+        --r-sm:8px; --r-md:12px; --r-lg:14px;
+        --safe-b:env(safe-area-inset-bottom, 0px);
+        --safe-t:env(safe-area-inset-top, 0px);
+        --tabbar-h:calc(60px + var(--safe-b));
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        -webkit-tap-highlight-color: transparent;
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{overscroll-behavior-y:contain;}
+    body{
+        background:var(--ink);color:var(--text);font-family:var(--font-body);
+        line-height:1.4;-webkit-font-smoothing:antialiased;
+        overflow-x:hidden;min-height:100vh;min-height:100dvh;
+    }
+    ::selection{background:var(--lane);color:var(--ink);}
+    :focus-visible{outline:2px solid var(--lane);outline-offset:2px;border-radius:4px;}
+    @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
+
+    /* ---------- Top bar ---------- */
+    .topbar{
+        position:sticky;top:0;z-index:60;
+        padding:calc(var(--safe-t) + 8px) 16px 8px;
+        background:var(--ink);border-bottom:1px solid var(--line-soft);
+        display:flex;align-items:center;gap:8px;
+    }
+    .brandmark{width:15px;height:15px;flex:none;}
+    .wordmark{
+        font-family:var(--font-display);font-weight:700;font-size:14px;
+        letter-spacing:.14em;text-transform:uppercase;line-height:1;
+    }
+    .wordmark span{color:var(--lane);}
+    .topbar-meta{
+        margin-left:auto;font-family:var(--font-mono);font-size:9px;
+        letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;
+        text-align:right;max-width:52%;
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     }
 
-    body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        font-family: var(--font-family);
-        line-height: 1.5;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
+    .view{
+        display:none;
+        padding:12px 16px calc(var(--tabbar-h) + 20px);
+        max-width:720px;margin:0 auto;
+    }
+    .view.active{display:block;}
+    body[data-cta="1"] .view{padding-bottom:calc(var(--tabbar-h) + 84px);}
+
+    .page-head{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+    .page-head h1{
+        font-family:var(--font-display);font-weight:700;
+        font-size:26px;line-height:1;letter-spacing:.02em;text-transform:uppercase;
+        flex:none;
+    }
+    .page-head .sub{
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;
+        text-transform:uppercase;color:var(--text-3);
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;
+    }
+    .page-head .seg{margin-bottom:0;margin-left:auto;flex:none;}
+    h2{
+        font-family:var(--font-display);font-weight:600;font-size:15px;
+        letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);
     }
 
-    .glass {
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-radius: 20px;
+    /* ---------- Compact unit switch ---------- */
+    .seg{
+        display:inline-flex;background:var(--ink-2);border:1px solid var(--line-soft);
+        border-radius:8px;padding:2px;margin-bottom:12px;
+    }
+    .seg button{
+        padding:5px 12px;background:transparent;border:none;
+        color:var(--text-3);border-radius:6px;cursor:pointer;
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;
+        text-transform:uppercase;transition:background .18s,color .18s;
+        min-height:26px;touch-action:manipulation;
+    }
+    .seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--text);}
+
+    /* ---------- Pace readout ---------- */
+    .readout{
+        border:1px solid var(--line-soft);border-radius:var(--r-lg);
+        background:radial-gradient(120% 100% at 50% 0%, rgba(217,242,75,.06), transparent 60%), var(--surface);
+        padding:18px 12px 14px;margin-bottom:12px;
+    }
+    .readout-row{display:flex;align-items:center;justify-content:center;gap:12px;}
+    .stepper{
+        width:50px;height:50px;flex:none;border-radius:50%;
+        background:var(--surface-2);border:1px solid var(--line);
+        color:var(--text);font-size:24px;line-height:1;
+        display:flex;align-items:center;justify-content:center;cursor:pointer;
+        font-family:var(--font-body);padding:0;touch-action:manipulation;
+        transition:background .15s,transform .1s;
+    }
+    .stepper:active{transform:scale(.9);background:var(--line);}
+    .pace-field{
+        background:transparent;border:none;outline:none;
+        font-family:var(--font-mono);font-weight:700;
+        font-size:clamp(40px,12vw,54px);letter-spacing:-.04em;
+        color:var(--text);text-align:center;width:4.6ch;padding:0;
+        border-bottom:2px solid transparent;
+    }
+    .pace-field:focus{border-bottom-color:var(--lane);}
+    .pace-unit{
+        text-align:center;margin-top:6px;
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;
+        text-transform:uppercase;color:var(--text-3);
+    }
+    .slider-wrap{padding:14px 4px 2px;}
+    input[type=range]{
+        -webkit-appearance:none;width:100%;height:36px;background:transparent;
+        outline:none;cursor:pointer;display:block;touch-action:pan-x;
+    }
+    input[type=range]::-webkit-slider-runnable-track{
+        height:5px;border-radius:3px;
+        background:linear-gradient(90deg,var(--lane-dim),var(--clay));opacity:.5;
+    }
+    input[type=range]::-webkit-slider-thumb{
+        -webkit-appearance:none;width:30px;height:30px;border-radius:50%;
+        background:var(--chalk);margin-top:-12.5px;
+        border:3px solid var(--ink);box-shadow:0 2px 12px rgba(0,0,0,.5);
+    }
+    input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--lane-dim),var(--clay));opacity:.5;}
+    input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--chalk);border:3px solid var(--ink);}
+    .slider-ends{
+        display:flex;justify-content:space-between;padding:0 2px;
+        font-family:var(--font-mono);font-size:9px;color:var(--text-3);letter-spacing:.08em;
     }
 
-    nav {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        padding: 15px 20px 30px;
-        z-index: 100;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid var(--glass-border);
-        display: flex;
-        justify-content: space-around;
+    /* ---------- Tappable race grid ---------- */
+    .preds{
+        display:grid;grid-template-columns:repeat(4,1fr);
+        border:1px solid var(--line-soft);border-radius:var(--r-md);
+        overflow:hidden;background:var(--surface);
+    }
+    .pred{
+        padding:9px 4px 8px;text-align:center;min-width:0;
+        border-right:1px solid var(--line-soft);
+        border-bottom:1px solid var(--line-soft);
+        background:transparent;cursor:pointer;
+        font-family:var(--font-body);color:var(--text);
+        transition:background .16s;touch-action:manipulation;
+        min-height:46px;
+    }
+    .pred:nth-child(4n){border-right:none;}
+    .pred:nth-child(n+5){border-bottom:none;}
+    .pred:active{background:var(--surface-2);}
+    .pred-label{
+        display:block;font-family:var(--font-mono);font-size:8px;
+        letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);
+        margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .pred-time{
+        display:block;font-family:var(--font-mono);font-size:14px;font-weight:600;
+        letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap;
+    }
+    .pred[aria-expanded="true"]{background:rgba(217,242,75,.09);}
+    .pred[aria-expanded="true"] .pred-label{color:var(--lane-dim);}
+    .pred[aria-expanded="true"] .pred-time{color:var(--lane);}
+
+    /* ---------- Milestone panel ---------- */
+    .miles{
+        margin-top:8px;border:1px solid var(--line-soft);
+        border-radius:var(--r-md);background:var(--surface);overflow:hidden;
+        animation:drop .22s cubic-bezier(.2,.8,.25,1) both;
+    }
+    @keyframes drop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+    .miles-head{
+        display:flex;align-items:center;gap:8px;
+        padding:8px 12px;border-bottom:1px solid var(--line-soft);
+        background:var(--ink-2);position:sticky;top:0;z-index:2;
+    }
+    /* Long races (half, full) scroll inside the panel so the race grid stays put */
+    .miles-body{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+    .miles-title{
+        font-family:var(--font-display);font-size:15px;font-weight:700;
+        letter-spacing:.06em;text-transform:uppercase;
+    }
+    .miles-sub{
+        font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;
+        text-transform:uppercase;color:var(--text-3);
+    }
+    .miles-close{
+        margin-left:auto;background:none;border:none;color:var(--text-3);
+        cursor:pointer;font-size:13px;min-width:36px;min-height:32px;
+        display:flex;align-items:center;justify-content:center;
+    }
+    .mile-row{
+        display:flex;align-items:center;gap:10px;
+        padding:8px 12px;border-bottom:1px solid var(--line-soft);
+    }
+    .mile-row:last-child{border-bottom:none;}
+    .mile-row.fin{background:rgba(217,242,75,.05);}
+    .mile-k{
+        font-family:var(--font-display);font-size:15px;font-weight:600;
+        letter-spacing:.05em;text-transform:uppercase;color:var(--text-2);
+        width:62px;flex:none;
+    }
+    .mile-row.fin .mile-k{color:var(--lane);}
+    .mile-cum{
+        font-family:var(--font-mono);font-size:15px;font-weight:600;
+        font-variant-numeric:tabular-nums;letter-spacing:-.02em;flex:1;
+    }
+    .mile-row.fin .mile-cum{color:var(--lane);}
+    .mile-lap{
+        font-family:var(--font-mono);font-size:11px;color:var(--text-3);
+        font-variant-numeric:tabular-nums;flex:none;
     }
 
-    .nav-btn {
-        background: none;
-        border: none;
-        color: var(--text-secondary);
-        font-size: 12px;
-        font-weight: 500;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
-        transition: color 0.2s ease;
+    /* ---------- Forms ---------- */
+    .field{margin-bottom:11px;}
+    .field-label{
+        display:block;margin-bottom:5px;
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.13em;
+        text-transform:uppercase;color:var(--text-3);
+    }
+    .input{
+        width:100%;background:var(--ink-2);border:1px solid var(--line-soft);
+        color:var(--text);padding:13px 12px;border-radius:var(--r-md);
+        font-size:16px;font-family:var(--font-body);outline:none;
+        transition:border-color .18s;min-height:48px;
+    }
+    .input::placeholder{color:var(--text-3);}
+    .input:focus{border-color:var(--lane-dim);}
+
+    .chips{display:flex;gap:6px;}
+    .chip{
+        flex:1;padding:10px 3px;border-radius:var(--r-md);
+        background:var(--ink-2);border:1px solid var(--line-soft);
+        color:var(--text-3);cursor:pointer;font-family:var(--font-body);
+        font-size:13px;font-weight:600;text-align:center;
+        transition:background .18s,border-color .18s,color .18s,transform .1s;
+        min-height:48px;touch-action:manipulation;
+    }
+    .chip small{display:block;font-family:var(--font-mono);font-size:8px;letter-spacing:.06em;opacity:.7;margin-top:1px;}
+    .chip[aria-pressed="true"]{background:var(--surface-2);border-color:var(--lane-dim);color:var(--text);}
+    .chip:active{transform:scale(.96);}
+
+    .add-row{display:flex;gap:6px;}
+    .add-row .input{flex:1;min-width:0;}
+
+    .btn{
+        border:none;border-radius:var(--r-md);cursor:pointer;
+        font-family:var(--font-body);font-weight:700;font-size:15px;
+        padding:13px 18px;color:var(--ink);
+        transition:transform .1s,filter .18s,background .18s;
+        min-height:48px;touch-action:manipulation;
+    }
+    .btn:active{transform:scale(.97);}
+    .btn-lane{background:var(--lane);}
+    .btn-ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--line);}
+    .btn-ghost:active{background:var(--line);}
+    .btn-clay{background:var(--clay);color:#fff;}
+
+    .roster{
+        margin:12px 0;display:grid;grid-template-columns:1fr;gap:1px;
+        background:var(--line-soft);border:1px solid var(--line-soft);
+        border-radius:var(--r-md);overflow:hidden;
+    }
+    @media (min-width:420px){ .roster{grid-template-columns:1fr 1fr;} }
+    .roster:empty{display:none;margin:0;}
+    .roster-row{display:flex;align-items:center;gap:9px;background:var(--surface);padding:7px 4px 7px 12px;}
+    .roster-num{font-family:var(--font-mono);font-size:10px;color:var(--text-3);width:2ch;flex:none;}
+    .roster-name{flex:1;font-weight:600;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .roster-del{
+        background:none;border:none;color:var(--text-3);cursor:pointer;
+        font-size:14px;line-height:1;min-width:44px;min-height:44px;
+        display:flex;align-items:center;justify-content:center;flex:none;
+    }
+    .roster-del:active{color:var(--clay);}
+
+    .empty{
+        border:1px dashed var(--line);border-radius:var(--r-md);
+        padding:18px 14px;text-align:center;color:var(--text-3);
+        font-size:13px;margin:12px 0;
     }
 
-    .nav-btn svg {
-        width: 24px;
-        height: 24px;
-        fill: currentColor;
+    .sticky-cta{
+        position:fixed;left:0;right:0;bottom:var(--tabbar-h);
+        padding:10px 16px;z-index:55;display:none;
+        background:linear-gradient(to top, var(--ink) 62%, transparent);
+    }
+    body[data-cta="1"] .sticky-cta{display:block;}
+    .sticky-cta-inner{max-width:720px;margin:0 auto;}
+    .sticky-cta .btn{width:100%;font-size:16px;padding:15px;}
+
+    .console{
+        position:sticky;top:calc(var(--safe-t) + 32px);z-index:50;
+        border:1px solid var(--line-soft);border-radius:var(--r-md);
+        background:var(--ink-2);padding:10px 12px;margin-bottom:10px;
+        box-shadow:0 8px 24px -8px rgba(0,0,0,.9);
+    }
+    .console-row{display:flex;align-items:center;gap:10px;}
+    .clock{
+        font-family:var(--font-mono);font-weight:700;font-size:30px;line-height:1;
+        letter-spacing:-.045em;font-variant-numeric:tabular-nums;flex:1;min-width:0;
+    }
+    .clock .dec{color:var(--text-3);font-weight:500;font-size:.72em;}
+    .console-ctrl{display:flex;gap:6px;flex:none;}
+    .console-ctrl .btn{padding:11px 26px;font-size:15px;min-height:46px;}
+    .console-meta{
+        display:flex;justify-content:space-between;align-items:center;gap:8px;
+        font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;
+        text-transform:uppercase;color:var(--text-3);margin-bottom:3px;
+    }
+    .status{display:flex;align-items:center;gap:5px;}
+    .dot{width:6px;height:6px;border-radius:50%;background:var(--text-3);flex:none;}
+    body[data-running="1"] .dot{background:var(--lane);animation:pulse 1.1s ease-in-out infinite;}
+    @keyframes pulse{50%{opacity:.25}}
+
+    .section-head{display:flex;align-items:center;gap:9px;margin:16px 0 9px;}
+    .section-head h2{flex:none;}
+    .count-pill{
+        font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text-3);
+        border:1px solid var(--line-soft);padding:2px 7px;border-radius:99px;flex:none;
+    }
+    .section-head .spacer{flex:1;}
+
+    .filter{display:flex;gap:6px;margin-bottom:9px;}
+    .filter .input{padding:9px 11px;min-height:42px;font-size:16px;}
+    .filter-clear{
+        background:var(--surface-2);border:1px solid var(--line);color:var(--text-2);
+        border-radius:var(--r-md);padding:0 14px;font-size:13px;font-weight:600;
+        cursor:pointer;font-family:var(--font-body);flex:none;min-height:42px;
     }
 
-    .nav-btn.active {
-        color: var(--accent-color);
+    .lane-list{display:flex;flex-direction:column;gap:7px;}
+    .lane-card{
+        position:relative;overflow:hidden;display:block;width:100%;padding:0;
+        background:var(--surface);border:1px solid var(--line-soft);
+        border-radius:var(--r-lg);text-align:left;cursor:pointer;
+        font-family:var(--font-body);color:var(--text);
+        transition:transform .09s,border-color .18s,opacity .18s;
+        touch-action:manipulation;
+    }
+    .lane-card:disabled{opacity:.5;cursor:default;}
+    .lane-card:not(:disabled):active{transform:scale(.985);border-color:var(--lane-dim);}
+    .lane-prog{
+        position:absolute;left:0;top:0;bottom:0;width:0%;
+        background:linear-gradient(90deg, rgba(217,242,75,.14), rgba(217,242,75,.05));
+        border-right:1px solid rgba(217,242,75,.32);
+        transition:width .45s cubic-bezier(.2,.8,.25,1);pointer-events:none;
+    }
+    .lane-inner{position:relative;display:flex;align-items:center;gap:10px;padding:9px 10px 9px 12px;}
+    .lane-left{flex:1;min-width:0;}
+    .lane-name{
+        display:block;font-family:var(--font-display);font-size:21px;font-weight:700;
+        letter-spacing:.02em;text-transform:uppercase;line-height:1.05;
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .lane-stats{
+        display:flex;gap:9px;margin-top:2px;
+        font-family:var(--font-mono);font-size:10px;color:var(--text-3);
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .lane-stats b{font-weight:500;color:var(--text-2);}
+    .lane-stats .hot,.lane-stats b.hot{color:var(--lane);}
+    .lane-hit{
+        flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        background:var(--lane);color:var(--ink);border-radius:10px;
+        min-width:104px;min-height:56px;padding:6px 10px;
+        font-weight:800;font-size:15px;letter-spacing:.01em;line-height:1.1;
+    }
+    .lane-hit small{
+        display:block;font-family:var(--font-mono);font-size:8px;font-weight:500;
+        letter-spacing:.1em;opacity:.6;text-transform:uppercase;margin-top:1px;
+    }
+    .lane-hit.final{background:var(--clay);color:#fff;}
+    .lane-card:disabled .lane-hit{background:var(--surface-2);color:var(--text-3);}
+
+    .result{
+        background:var(--surface);border:1px solid var(--line-soft);
+        border-radius:var(--r-lg);padding:10px 12px;position:relative;overflow:hidden;
+    }
+    .result::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line);}
+    .result[data-place="1"]::before{background:var(--lane);}
+    .result[data-place="2"]::before{background:#9AA5A1;}
+    .result[data-place="3"]::before{background:var(--clay);}
+    .result-top{display:flex;align-items:center;gap:10px;}
+    .place{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-3);width:2ch;flex:none;line-height:1;}
+    .result[data-place="1"] .place{color:var(--lane);}
+    .result-name{
+        font-family:var(--font-display);font-size:19px;font-weight:700;
+        letter-spacing:.02em;text-transform:uppercase;line-height:1;
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;
+    }
+    .result-time{font-family:var(--font-mono);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.03em;flex:none;}
+    .splits-strip{
+        display:flex;margin-top:8px;border-top:1px solid var(--line-soft);
+        padding-top:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    }
+    .splits-strip::-webkit-scrollbar{display:none;}
+    .split-cell{flex:1 0 auto;min-width:60px;padding:0 8px;border-right:1px solid var(--line-soft);}
+    .split-cell:last-child{border-right:none;}
+    .split-cell:first-child{padding-left:0;}
+    .split-k{font-family:var(--font-mono);font-size:8px;color:var(--text-3);letter-spacing:.07em;text-transform:uppercase;}
+    .split-v{font-family:var(--font-mono);font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-2);}
+    .split-lap{font-family:var(--font-mono);font-size:9px;color:var(--text-3);}
+
+    .undo-bar{
+        display:flex;align-items:center;gap:8px;
+        background:var(--surface-2);border:1px solid var(--line);
+        border-radius:var(--r-md);padding:6px 4px 6px 11px;margin-bottom:9px;
+        font-size:12px;color:var(--text-2);
+    }
+    .undo-bar span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .undo-bar button{
+        background:none;border:none;color:var(--lane);font-weight:700;font-size:13px;
+        cursor:pointer;padding:9px 11px;font-family:var(--font-body);flex:none;min-height:42px;
     }
 
-    .view-container {
-        padding: 40px 20px 100px;
-        max-width: 800px;
-        margin: 0 auto;
-        display: none;
-        animation: fadeIn 0.4s ease forwards;
+    .tabbar{
+        position:fixed;bottom:0;left:0;right:0;z-index:70;
+        display:flex;padding:5px 12px calc(5px + var(--safe-b));
+        background:rgba(11,13,12,.94);
+        backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+        border-top:1px solid var(--line-soft);
     }
+    .tabbar-inner{display:flex;gap:6px;max-width:720px;margin:0 auto;width:100%;}
+    .tab{
+        flex:1;background:none;border:none;cursor:pointer;
+        display:flex;flex-direction:column;align-items:center;gap:2px;
+        color:var(--text-3);padding:5px 8px;border-radius:9px;
+        font-family:var(--font-mono);font-size:8px;letter-spacing:.11em;text-transform:uppercase;
+        transition:color .18s,background .18s;min-height:46px;
+    }
+    .tab svg{width:19px;height:19px;fill:currentColor;}
+    .tab[aria-current="true"]{color:var(--lane);background:rgba(217,242,75,.07);}
 
-    .view-container.active {
-        display: block;
+    .toast{
+        position:fixed;left:50%;bottom:calc(var(--tabbar-h) + 14px);
+        transform:translateX(-50%) translateY(10px);
+        background:var(--chalk);color:var(--ink);font-weight:700;font-size:13px;
+        padding:9px 16px;border-radius:99px;opacity:0;pointer-events:none;
+        transition:opacity .2s,transform .2s;z-index:90;white-space:nowrap;
+        max-width:88vw;overflow:hidden;text-overflow:ellipsis;
     }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+    .scrim{
+        position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.6);
+        backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+        display:none;align-items:flex-end;
     }
-
-    h1 {
-        font-size: 34px;
-        font-weight: 700;
-        margin-bottom: 30px;
-        letter-spacing: 0.5px;
+    .scrim.show{display:flex;}
+    .sheet{
+        width:100%;max-width:720px;margin:0 auto;
+        background:var(--surface);border:1px solid var(--line);
+        border-radius:18px 18px 0 0;padding:22px 16px calc(18px + var(--safe-b));
+        animation:up .24s cubic-bezier(.2,.8,.25,1) both;
     }
-
-    h2 {
-        font-size: 22px;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .card {
-        padding: 24px;
-        cursor: pointer;
-        transition: transform 0.3s ease, background 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .card:hover {
-        transform: translateY(-5px) scale(1.02);
-        background: rgba(44, 44, 46, 0.8);
-    }
-
-    .card h3 {
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    .card p {
-        color: var(--text-secondary);
-        font-size: 15px;
-    }
-
-    .card-icon {
-        font-size: 32px;
-        margin-bottom: 8px;
-    }
-
-    button {
-        font-family: var(--font-family);
-        font-weight: 600;
-        border: none;
-        border-radius: 12px;
-        padding: 16px 24px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: transform 0.1s ease, background 0.2s ease;
-        color: #fff;
-    }
-
-    button:active {
-        transform: scale(0.96);
-    }
-
-    .btn-primary { background: var(--accent-color); }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-success { background: var(--success-color); color: #000; }
-    .btn-danger { background: var(--danger-color); }
-    .btn-secondary { background: rgba(255, 255, 255, 0.1); color: var(--text-color); }
-
-    input[type="text"] {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--glass-border);
-        color: var(--text-color);
-        padding: 16px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-family: var(--font-family);
-        outline: none;
-        transition: border-color 0.2s ease;
-    }
-
-    input[type="text"]:focus {
-        border-color: var(--accent-color);
-    }
-
-    select.glass-select {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--glass-border);
-        color: var(--text-color);
-        padding: 16px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-family: var(--font-family);
-        outline: none;
-        appearance: none;
-    }
-
-    select.glass-select option {
-        background: #1c1c1e;
-        color: white;
-    }
-
-    .toggle-group {
-        display: flex;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 4px;
-        margin-bottom: 30px;
-    }
-
-    .toggle-btn {
-        flex: 1;
-        padding: 10px;
-        background: transparent;
-        color: var(--text-secondary);
-        border-radius: 8px;
-        font-size: 14px;
-    }
-
-    .toggle-btn.active {
-        background: rgba(255, 255, 255, 0.2);
-        color: var(--text-color);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .pace-display {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .pace-input-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 5px;
-    }
-
-    .pace-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: white;
-        font-size: 28px;
-        line-height: 1;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
-        padding: 0;
-    }
-    
-    .pace-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .pace-value-input {
-        background: transparent !important;
-        border: none !important;
-        color: var(--text-color) !important;
-        font-size: 64px !important;
-        font-weight: 700 !important;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: -2px;
-        text-align: center;
-        width: 180px !important;
-        outline: none;
-        padding: 0 !important;
-        border-radius: 0 !important;
-    }
-
-    .pace-value-input:focus {
-        border-bottom: 2px solid var(--accent-color) !important;
-    }
-
-    .pace-unit {
-        color: var(--text-secondary);
-        font-size: 18px;
-        font-weight: 500;
-        margin-top: 5px;
-    }
-
-    .slider-container {
-        margin-bottom: 40px;
-    }
-
-    input[type="range"] {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 8px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
-        outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #fff;
-        cursor: pointer;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-
-    .predictions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 15px;
-    }
-
-    .prediction-item {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .prediction-label {
-        font-size: 14px;
-        color: var(--text-secondary);
-        font-weight: 600;
-    }
-
-    .prediction-time {
-        font-size: 24px;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .setup-form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .runner-input-group {
-        display: flex;
-        gap: 10px;
-    }
-
-    .runner-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 30px;
-    }
-
-    .runner-list-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px;
-    }
-    
-    .remove-runner {
-        background: none;
-        color: var(--danger-color);
-        padding: 5px 10px;
-        border-radius: 6px;
-    }
-
-    .timer-display-container {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .giant-timer {
-        font-size: 80px;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: -2px;
-        line-height: 1;
-        margin-bottom: 10px;
-    }
-
-    @media (max-width: 480px) {
-        .giant-timer { font-size: 60px; }
-        .pace-value-input { font-size: 50px !important; width: 140px !important; }
-    }
-
-    .controls {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 40px;
-    }
-    
-    .controls button {
-        min-width: 100px;
-    }
-
-    .active-runners {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin-bottom: 40px;
-    }
-
-    .runner-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        background: rgba(50, 215, 75, 0.1);
-        border: 1px solid rgba(50, 215, 75, 0.3);
-        color: var(--text-color);
-        padding: 16px;
-    }
-
-    .runner-info-row {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        margin-bottom: 12px;
-        align-items: center;
-    }
-
-    .runner-name {
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    .runner-split-info {
-        font-size: 14px;
-        color: var(--text-secondary);
-        text-align: right;
-    }
-
-    .runner-action-row {
-        width: 100%;
-    }
-
-    .runner-action-btn {
-        background: rgba(50, 215, 75, 0.2);
-        color: var(--success-color);
-        padding: 12px;
-        border-radius: 8px;
-        width: 100%;
-        text-align: center;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background 0.2s;
-    }
-
-    .runner-btn:hover .runner-action-btn {
-        background: rgba(50, 215, 75, 0.3);
-    }
-
-    .finished-runners-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .finished-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .finished-item {
-        display: flex;
-        flex-direction: column;
-        padding: 16px;
-        gap: 8px;
-    }
-
-    .finished-item-header {
-        display: flex;
-        justify-content: space-between;
-        font-weight: 600;
-        font-size: 18px;
-    }
-
-    .finished-item-time {
-        font-family: monospace;
-        font-size: 18px;
-        color: var(--text-color);
-    }
-
-    .finished-splits {
-        font-size: 13px;
-        color: var(--text-secondary);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+    @keyframes up{from{transform:translateY(100%)}to{transform:none}}
+    .sheet h3{font-family:var(--font-display);font-size:23px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:5px;}
+    .sheet p{color:var(--text-2);font-size:13px;margin-bottom:16px;}
+    .sheet-actions{display:flex;flex-direction:column;gap:7px;}
+    .sheet-actions .btn{width:100%;}
 </style>
 </head>
-<body>
+<body data-view="timer" data-running="0" data-cta="0">
 
-    <div id="app">
-        <!-- HOME VIEW -->
-        <div id="view-home" class="view-container active">
-            <h1>Runner's Toolkit</h1>
-            
-            <div class="grid">
-                <div class="card glass" onclick="navigate('view-pace')">
-                    <div class="card-icon">🏃</div>
-                    <h3>Pace Calculator</h3>
-                    <p>Interactive slider and input for instant pace and race time predictions.</p>
-                </div>
-                
-                <div class="card glass" onclick="navigate('view-timer')">
-                    <div class="card-icon">⏱</div>
-                    <h3>Race Timer</h3>
-                    <p>Coach's tool for recording splits, tracking multiple athletes, and calculating expected finish times.</p>
+<header class="topbar">
+    <svg class="brandmark" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="1" y="3" width="3" height="18" fill="#D9F24B"/>
+        <rect x="6.5" y="3" width="1.5" height="18" fill="#2C3532"/>
+        <rect x="11" y="3" width="1.5" height="18" fill="#2C3532"/>
+        <rect x="15.5" y="3" width="1.5" height="18" fill="#2C3532"/>
+        <rect x="20" y="3" width="1.5" height="18" fill="#C4553A"/>
+    </svg>
+    <div class="wordmark">SPLIT<span>S</span></div>
+    <div class="topbar-meta" id="topbar-meta">Race timer</div>
+</header>
+
+<!-- ============ TIMER ============ -->
+<main id="view-timer" class="view active">
+    <section id="setup">
+        <div class="page-head"><h1>Race Setup</h1></div>
+
+        <div class="field">
+            <span class="field-label">Race distance</span>
+            <div class="chips" id="chips-dist" role="group" aria-label="Race distance"></div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">Take a split every</span>
+            <div class="chips" id="chips-split" role="group" aria-label="Split interval"></div>
+        </div>
+
+        <div class="field" style="margin-top:16px">
+            <label class="field-label" for="new-runner">Roster <span id="roster-count" style="color:var(--text-2)"></span></label>
+            <div class="add-row">
+                <input class="input" id="new-runner" placeholder="Athlete name" autocomplete="off"
+                       enterkeyhint="done" autocapitalize="words">
+                <button class="btn btn-lane" id="btn-add" style="padding:13px 16px">Add</button>
+            </div>
+        </div>
+
+        <div class="roster" id="roster"></div>
+        <div class="empty" id="roster-empty">Add athletes one at a time, or paste a list separated by commas or line breaks.</div>
+    </section>
+
+    <section id="live" style="display:none">
+        <div class="page-head">
+            <h1 id="live-title">Race</h1>
+            <span class="sub" id="live-sub">—</span>
+            <button class="btn btn-ghost" id="btn-reset" style="padding:6px 12px;font-size:12px;min-height:0;margin-left:auto;flex:none">Reset</button>
+        </div>
+
+        <div class="console">
+            <div class="console-meta">
+                <span class="status"><span class="dot"></span><span id="status-text">Ready</span></span>
+                <span id="console-dist">—</span>
+            </div>
+            <div class="console-row">
+                <div class="clock" id="clock">00:00<span class="dec">.0</span></div>
+                <div class="console-ctrl">
+                    <button class="btn btn-lane" id="btn-run">Start</button>
                 </div>
             </div>
         </div>
 
-        <!-- PACE CALCULATOR VIEW -->
-        <div id="view-pace" class="view-container">
-            <h1>Pace Calculator</h1>
-            
-            <div class="toggle-group">
-                <button class="toggle-btn active" id="btn-mile" onclick="setPaceUnit('mile')">Minutes per Mile</button>
-                <button class="toggle-btn" id="btn-km" onclick="setPaceUnit('km')">Minutes per Kilometer</button>
-            </div>
+        <div id="undo-slot"></div>
 
-            <div class="pace-display">
-                <div class="pace-input-container">
-                    <button class="pace-btn" onclick="adjustPace(-1)">-</button>
-                    <input type="text" id="pace-value-display" class="pace-value-input" value="6:15" onblur="handlePaceTextInput(event)" onkeydown="if(event.key==='Enter') { this.blur(); }">
-                    <button class="pace-btn" onclick="adjustPace(1)">+</button>
-                </div>
-                <div class="pace-unit" id="pace-unit-display">/ mile</div>
-            </div>
-
-            <div class="slider-container">
-                <input type="range" id="pace-slider" min="240" max="720" value="375" step="1">
-            </div>
-
-            <h2>Race Predictions</h2>
-            <div class="predictions-grid">
-                <div class="prediction-item glass">
-                    <div class="prediction-label">400m</div>
-                    <div class="prediction-time" id="pred-400m">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">800m</div>
-                    <div class="prediction-time" id="pred-800m">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">1600m</div>
-                    <div class="prediction-time" id="pred-1600m">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">3200m</div>
-                    <div class="prediction-time" id="pred-3200m">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">5K</div>
-                    <div class="prediction-time" id="pred-5k">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">10K</div>
-                    <div class="prediction-time" id="pred-10k">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">Half Marathon</div>
-                    <div class="prediction-time" id="pred-half">0:00</div>
-                </div>
-                <div class="prediction-item glass">
-                    <div class="prediction-label">Marathon</div>
-                    <div class="prediction-time" id="pred-full">0:00</div>
-                </div>
-            </div>
+        <div class="section-head">
+            <h2>On the track</h2>
+            <span class="count-pill" id="count-active">0</span>
+            <span class="spacer"></span>
+            <span class="count-pill" id="next-due" style="display:none"></span>
         </div>
 
-        <!-- RACE TIMER VIEW -->
-        <div id="view-timer" class="view-container">
-            <!-- Screen 1: Setup -->
-            <div id="timer-setup">
-                <h1>Race Setup</h1>
-                <div class="setup-form">
-                    <input type="text" id="meet-name" placeholder="Meet Name & Info (Optional)">
-                    
-                    <select id="race-distance" class="glass-select">
-                        <option value="1">1 Mile Race</option>
-                        <option value="2">2 Mile Race</option>
-                        <option value="3.10686">5K Race</option>
-                    </select>
+        <div class="filter" id="filter-bar" style="display:none">
+            <input class="input" id="filter-input" placeholder="Find an athlete…" autocomplete="off"
+                   enterkeyhint="search" inputmode="search">
+            <button class="filter-clear" id="filter-clear">Clear</button>
+        </div>
 
-                    <select id="split-interval" class="glass-select">
-                        <option value="0.25">Splits every 0.25 Mile (400m)</option>
-                        <option value="0.5">Splits every 0.5 Mile (800m)</option>
-                        <option value="1">Splits every 1 Mile</option>
-                    </select>
+        <div class="lane-list" id="active-list"></div>
+        <div class="empty" id="active-empty" style="display:none">Everyone's across the line.</div>
 
-                    <div class="runner-input-group" style="margin-top: 10px;">
-                        <input type="text" id="new-runner-name" placeholder="Athlete Name" onkeypress="handleRunnerInputKeyPress(event)">
-                        <button class="btn-primary" onclick="addRunner()">Add</button>
-                    </div>
-                </div>
+        <div class="section-head">
+            <h2>Results</h2>
+            <span class="count-pill" id="count-fin">0</span>
+        </div>
+        <div class="lane-list" id="result-list"></div>
+        <div class="empty" id="result-empty">Finishers appear here, fastest first.</div>
+    </section>
+</main>
 
-                <div class="runner-list" id="setup-runner-list">
-                    <!-- Runners added here -->
-                </div>
-
-                <button class="btn-success" style="width: 100%; display: none;" id="start-race-btn" onclick="startRaceScreen()">Ready to Start Race</button>
-            </div>
-
-            <!-- Screen 2: Timing -->
-            <div id="timer-active" style="display: none;">
-                <h1 id="active-meet-name">Race Timer</h1>
-                
-                <div class="timer-display-container">
-                    <div class="giant-timer" id="main-timer">00:00:00.0</div>
-                </div>
-
-                <div class="controls">
-                    <button id="btn-timer-start" class="btn-success" onclick="toggleTimer()">Start</button>
-                    <button class="btn-secondary" onclick="resetTimer()">Reset</button>
-                </div>
-
-                <h2>Active Runners</h2>
-                <div class="active-runners" id="active-runners-list">
-                    <!-- Active runners populated here -->
-                </div>
-
-                <div class="finished-runners-header">
-                    <h2>Finished</h2>
-                    <button class="btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="exportResults()">Export CSV</button>
-                </div>
-                <div class="finished-list" id="finished-runners-list">
-                    <!-- Finished runners populated here -->
-                </div>
-            </div>
+<!-- ============ PACE ============ -->
+<main id="view-pace" class="view">
+    <div class="page-head">
+        <h1>Pace</h1>
+        <span class="sub">Tap a race for mile splits</span>
+        <div class="seg" role="group" aria-label="Pace unit">
+            <button id="seg-mile" aria-pressed="true">/ mile</button>
+            <button id="seg-km" aria-pressed="false">/ km</button>
         </div>
     </div>
 
-    <!-- NAVIGATION -->
-    <nav>
-        <button class="nav-btn active" id="nav-home" onclick="navigate('view-home')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            Home
+    <div class="readout">
+        <div class="readout-row">
+            <button class="stepper" id="pace-minus" aria-label="One second faster">−</button>
+            <input class="pace-field" id="pace-field" value="6:15" inputmode="numeric"
+                   enterkeyhint="done" aria-label="Pace">
+            <button class="stepper" id="pace-plus" aria-label="One second slower">+</button>
+        </div>
+        <div class="pace-unit" id="pace-unit">Minutes per mile</div>
+        <div class="slider-wrap">
+            <input type="range" id="pace-slider" min="240" max="720" value="375" step="1" aria-label="Pace">
+            <div class="slider-ends"><span id="end-fast">4:00</span><span id="end-slow">12:00</span></div>
+        </div>
+    </div>
+
+    <div class="preds" id="preds"></div>
+    <div id="miles-slot"></div>
+</main>
+
+<div class="sticky-cta">
+    <div class="sticky-cta-inner">
+        <button class="btn btn-lane" id="btn-begin">Go to the line →</button>
+    </div>
+</div>
+
+<nav class="tabbar">
+    <div class="tabbar-inner">
+        <button class="tab" id="tab-timer" aria-current="true">
+            <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6zm-4 13h2V8h-2zm8.03-6.61 1.42-1.42a10 10 0 0 0-1.4-1.4l-1.43 1.42A9 9 0 1 0 20 13a8.9 8.9 0 0 0-.97-4.61M12 20a7 7 0 1 1 7-7 7 7 0 0 1-7 7"/></svg>Timer
         </button>
-        <button class="nav-btn" id="nav-pace" onclick="navigate('view-pace')">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
-            Pace
+        <button class="tab" id="tab-pace" aria-current="false">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2m0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8m4.24-12.24L11 13l-3.24 3.24 1.06 1.06L12 15l5.3-6.18z"/></svg>Pace
         </button>
-        <button class="nav-btn" id="nav-timer" onclick="navigate('view-timer')">
-            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-            Timer
-        </button>
-    </nav>
+    </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="scrim" id="scrim">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <h3 id="sheet-title">Reset the race?</h3>
+        <p id="sheet-body">Every split recorded so far will be cleared.</p>
+        <div class="sheet-actions">
+            <button class="btn btn-clay" id="sheet-yes">Reset race</button>
+            <button class="btn btn-ghost" id="sheet-no">Keep timing</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // --- GLOBAL NAVIGATION ---
-    function navigate(viewId) {
-        document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
 
-        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-        const navId = viewId.replace('view-', 'nav-');
-        if(document.getElementById(navId)) {
-            document.getElementById(navId).classList.add('active');
+/* ================= NAV ================= */
+function go(v){
+    document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
+    $('view-' + v).classList.add('active');
+    document.body.dataset.view = v;
+    $('tab-timer').setAttribute('aria-current', String(v === 'timer'));
+    $('tab-pace').setAttribute('aria-current', String(v === 'pace'));
+    const rd = DISTS.find(d => d.v === raceDist);
+    $('topbar-meta').textContent = v === 'timer'
+        ? (liveOn() && rd ? rd.label : 'Race timer')
+        : 'Pace calculator';
+    window.scrollTo(0, 0);
+    syncCTA();
+}
+$('tab-timer').addEventListener('click', () => go('timer'));
+$('tab-pace').addEventListener('click', () => go('pace'));
+
+let toastT;
+function toast(msg){
+    const t = $('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => t.classList.remove('show'), 1700);
+}
+function buzz(p){ if (navigator.vibrate) { try { navigator.vibrate(p); } catch(e){} } }
+
+/* ================= FORMAT ================= */
+function fmtClock(sec, forceH){
+    sec = Math.round(sec);
+    const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+    if (h > 0 || forceH) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    return `${m}:${String(s).padStart(2,'0')}`;
+}
+function fmtMs(ms, deci = true){
+    const d = Math.floor(ms / 100) % 10;
+    const ts = Math.floor(ms / 1000), s = ts % 60, m = Math.floor(ts / 60) % 60, h = Math.floor(ts / 3600);
+    const base = h > 0
+        ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+        : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    return deci ? `${base}.${d}` : base;
+}
+
+/* ================= PACE ================= */
+/* Every race carries its true distance in miles AND km, so mile-milestone
+   breakdowns work identically whichever unit the pace is entered in. */
+const RACES = [
+    { k:'400',  label:'400',   mi:0.248548, km:0.4      },
+    { k:'800',  label:'800',   mi:0.497097, km:0.8      },
+    { k:'2MI',  label:'2 Mile',mi:2,        km:3.218688 },
+    { k:'5K',   label:'5K',    mi:3.106856, km:5        },
+    { k:'10K',  label:'10K',   mi:6.213712, km:10       },
+    { k:'10MI', label:'10 Mile',mi:10,      km:16.09344 },
+    { k:'HALF', label:'Half',  mi:13.109375,km:21.0975  },
+    { k:'FULL', label:'Full',  mi:26.21875, km:42.195   }
+];
+
+let unit = 'mile';
+let openRace = null;
+const slider = $('pace-slider');
+const field  = $('pace-field');
+
+/* Seconds per mile, whatever unit is currently selected */
+const secPerMile = () => unit === 'mile' ? +slider.value : +slider.value * 1.609344;
+const raceTime   = r => unit === 'mile' ? +slider.value * r.mi : +slider.value * r.km;
+
+function setUnit(u){
+    const cur = +slider.value;
+    unit = u;
+    $('seg-mile').setAttribute('aria-pressed', String(u === 'mile'));
+    $('seg-km').setAttribute('aria-pressed', String(u === 'km'));
+    $('pace-unit').textContent = u === 'mile' ? 'Minutes per mile' : 'Minutes per kilometre';
+    if (u === 'mile'){
+        slider.min = 240; slider.max = 720;
+        $('end-fast').textContent = '4:00'; $('end-slow').textContent = '12:00';
+        slider.value = Math.round(Math.min(720, Math.max(240, cur * 1.609344)));
+    } else {
+        slider.min = 150; slider.max = 450;
+        $('end-fast').textContent = '2:30'; $('end-slow').textContent = '7:30';
+        slider.value = Math.round(Math.min(450, Math.max(150, cur / 1.609344)));
+    }
+    renderPace();
+}
+function nudge(n){
+    slider.value = Math.max(+slider.min, Math.min(+slider.max, +slider.value + n));
+    renderPace();
+}
+function parsePace(){
+    const v = field.value.replace(/[^\d:]/g, '');
+    let sec = null;
+    if (v.includes(':')){
+        const p = v.split(':');
+        sec = (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0);
+    } else if (v.length){
+        const n = parseInt(v, 10);
+        if (!isNaN(n)) sec = n < 100 ? n * 60 : Math.floor(n / 100) * 60 + (n % 100);
+    }
+    if (sec !== null && !isNaN(sec)) slider.value = Math.max(+slider.min, Math.min(+slider.max, sec));
+    renderPace();
+}
+
+/* Mile milestones: always in miles, regardless of the pace unit selected. */
+function mileMarks(r){
+    const marks = [];
+    const whole = Math.floor(r.mi + 1e-9);
+    for (let m = 1; m <= whole; m++) marks.push({ mi: m, label: `${m} mi`, fin: Math.abs(m - r.mi) < 1e-6 });
+    if (r.mi - whole > 0.02) marks.push({ mi: r.mi, label: r.label, fin: true });
+    return marks;
+}
+
+function renderMiles(){
+    const slot = $('miles-slot');
+    if (!openRace){ slot.innerHTML = ''; return; }
+    const r = RACES.find(x => x.k === openRace);
+    if (!r){ slot.innerHTML = ''; return; }
+
+    const marks = mileMarks(r);
+    if (!marks.length){ slot.innerHTML = ''; return; }
+
+    const spm = secPerMile();
+    let prev = 0;
+    const rows = marks.map(m => {
+        const cum = spm * m.mi;
+        const lap = cum - prev; prev = cum;
+        const lapLbl = m.fin && Math.abs(m.mi - Math.round(m.mi)) > 0.02
+            ? `last ${(m.mi - Math.floor(m.mi)).toFixed(2).replace(/^0/,'')} mi ${fmtClock(lap)}`
+            : `+${fmtClock(lap)}`;
+        return `<div class="mile-row${m.fin ? ' fin' : ''}">
+            <span class="mile-k">${m.fin && m.label !== `${m.mi} mi` ? 'Finish' : m.label}</span>
+            <span class="mile-cum">${fmtClock(cum, cum >= 3600)}</span>
+            <span class="mile-lap">${lapLbl}</span>
+        </div>`;
+    }).join('');
+
+    slot.innerHTML = `<div class="miles">
+        <div class="miles-head">
+            <span class="miles-title">${r.label}</span>
+            <span class="miles-sub">${fmtClock(spm)} / mile · ${(+r.mi.toFixed(2))} mi</span>
+            <button class="miles-close" id="miles-close" aria-label="Close mile splits">✕</button>
+        </div>
+        <div class="miles-body">${rows}</div>
+    </div>`;
+    $('miles-close').addEventListener('click', () => { openRace = null; renderPace(); });
+}
+
+function renderPace(){
+    field.value = fmtClock(+slider.value);
+    $('preds').innerHTML = RACES.map(r => {
+        const t = raceTime(r);
+        return `<button class="pred" data-race="${r.k}" aria-expanded="${openRace === r.k}">
+            <span class="pred-label">${r.label}</span>
+            <span class="pred-time">${fmtClock(t, t >= 3600)}</span>
+        </button>`;
+    }).join('');
+    renderMiles();
+}
+
+$('preds').addEventListener('click', e => {
+    const b = e.target.closest('.pred'); if (!b) return;
+    const k = b.dataset.race;
+    openRace = openRace === k ? null : k;
+    renderPace();
+    if (openRace) $('miles-slot').scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+$('seg-mile').addEventListener('click', () => setUnit('mile'));
+$('seg-km').addEventListener('click',  () => setUnit('km'));
+$('pace-minus').addEventListener('click', () => nudge(-1));
+$('pace-plus').addEventListener('click',  () => nudge(1));
+field.addEventListener('focus', () => field.select());
+field.addEventListener('blur', parsePace);
+field.addEventListener('keydown', e => { if (e.key === 'Enter') field.blur(); });
+slider.addEventListener('input', renderPace);
+renderPace();
+
+/* ================= TIMER ================= */
+const DISTS = [
+    {v:1,        label:'1 Mile', sub:'1609m'},
+    {v:2,        label:'2 Mile', sub:'3218m'},
+    {v:3.106856, label:'5K',     sub:'3.1 mi'}
+];
+const INTERVALS = [
+    {v:.25, label:'400m',   sub:'¼ mile'},
+    {v:.5,  label:'800m',   sub:'½ mile'},
+    {v:1,   label:'1 mile', sub:'full'}
+];
+let distSel = 3.106856, intSel = 1;
+
+let roster = [], active = [], finished = [], uid = 0;
+let checkpoints = [], raceDist = 3.106856;
+let t0 = 0, elapsed = 0, running = false, raf = null;
+let lastAction = null, filterQ = '';
+
+const liveOn = () => $('live').style.display !== 'none';
+
+function renderChips(){
+    $('chips-dist').innerHTML = DISTS.map((d, i) =>
+        `<button class="chip" data-di="${i}" aria-pressed="${d.v === distSel}">${d.label}<small>${d.sub}</small></button>`
+    ).join('');
+    $('chips-split').innerHTML = INTERVALS.map((x, i) =>
+        `<button class="chip" data-ii="${i}" aria-pressed="${x.v === intSel}">${x.label}<small>${x.sub}</small></button>`
+    ).join('');
+}
+$('chips-dist').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    distSel = DISTS[+b.dataset.di].v; renderChips();
+});
+$('chips-split').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    intSel = INTERVALS[+b.dataset.ii].v; renderChips();
+});
+renderChips();
+
+function addRunner(){
+    const el = $('new-runner');
+    const raw = el.value.trim();
+    if (!raw){ el.focus(); return; }
+    const names = raw.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean);
+    let added = 0, dupes = 0;
+    names.forEach(n => {
+        if (roster.some(r => r.name.toLowerCase() === n.toLowerCase())){ dupes++; return; }
+        roster.push({ id: uid++, name: n }); added++;
+    });
+    el.value = ''; el.focus();
+    renderRoster();
+    if (added > 1) toast(`Added ${added} athletes`);
+    else if (added === 0 && dupes) toast('Already on the roster');
+}
+function delRunner(id){ roster = roster.filter(r => r.id !== id); renderRoster(); }
+function renderRoster(){
+    $('roster').innerHTML = roster.map((r, i) =>
+        `<div class="roster-row">
+            <span class="roster-num">${String(i + 1).padStart(2,'0')}</span>
+            <span class="roster-name">${esc(r.name)}</span>
+            <button class="roster-del" data-del="${r.id}" aria-label="Remove ${esc(r.name)}">✕</button>
+        </div>`).join('');
+    $('roster-empty').style.display = roster.length ? 'none' : 'block';
+    $('roster-count').textContent = roster.length ? `· ${roster.length}` : '';
+    syncCTA();
+}
+$('roster').addEventListener('click', e => {
+    const b = e.target.closest('[data-del]'); if (!b) return;
+    delRunner(+b.dataset.del);
+});
+$('btn-add').addEventListener('click', addRunner);
+$('new-runner').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addRunner(); } });
+
+function syncCTA(){
+    const show = document.body.dataset.view === 'timer' && !liveOn() && roster.length > 0;
+    document.body.dataset.cta = show ? '1' : '0';
+}
+
+function buildCheckpoints(dist, step){
+    const pts = []; let c = step;
+    while (c < dist - 0.05){
+        if (Math.abs(dist - 3.106856) < .01 && Math.abs(c - 3) < .01){ c += step; continue; }
+        pts.push(+c.toFixed(3)); c += step;
+    }
+    pts.push(dist);
+    return pts;
+}
+function cpLabel(d){
+    if (Math.abs(d - raceDist) < .01) return 'Finish';
+    if (Math.abs(d - Math.round(d)) < .01) return `${Math.round(d)} mi`;
+    return `${(+d.toFixed(2))} mi`;
+}
+function cpShort(d){
+    if (Math.abs(d - raceDist) < .01) return 'FIN';
+    return cpLabel(d).replace(' mi', 'mi');
+}
+
+function beginRace(){
+    if (!roster.length) return;
+    raceDist = distSel;
+    checkpoints = buildCheckpoints(distSel, intSel);
+    const dLabel = DISTS.find(d => d.v === distSel).label;
+    $('live-title').textContent = dLabel;
+    $('live-sub').textContent = `Split every ${INTERVALS.find(i => i.v === intSel).label}`;
+    $('console-dist').textContent = `${checkpoints.length} marks`;
+    $('topbar-meta').textContent = dLabel;
+
+    active = roster.map(r => ({ ...r, splits: [], idx: 0 }));
+    finished = []; lastAction = null; filterQ = '';
+    $('filter-input').value = '';
+    elapsed = 0; running = false;
+    document.body.dataset.running = '0';
+    cancelAnimationFrame(raf);
+    paintClock();
+    $('btn-run').textContent = 'Start';
+    $('btn-run').className = 'btn btn-lane';
+    $('status-text').textContent = 'Ready';
+
+    $('setup').style.display = 'none';
+    $('live').style.display = 'block';
+    renderActive(); renderResults(); renderUndo(); syncCTA();
+    window.scrollTo(0, 0);
+}
+$('btn-begin').addEventListener('click', beginRace);
+
+function paintClock(){
+    const ms = running ? elapsed + (Date.now() - t0) : elapsed;
+    $('clock').innerHTML = `${fmtMs(ms, false)}<span class="dec">.${Math.floor(ms / 100) % 10}</span>`;
+}
+function loop(){ if (!running) return; paintClock(); raf = requestAnimationFrame(loop); }
+
+function toggleTimer(){
+    const b = $('btn-run');
+    if (running){
+        elapsed += Date.now() - t0; running = false;
+        cancelAnimationFrame(raf);
+        document.body.dataset.running = '0';
+        b.textContent = 'Resume'; b.className = 'btn btn-lane';
+        $('status-text').textContent = 'Paused';
+    } else {
+        t0 = Date.now(); running = true;
+        document.body.dataset.running = '1';
+        raf = requestAnimationFrame(loop);
+        b.textContent = 'Pause'; b.className = 'btn btn-ghost';
+        $('status-text').textContent = 'Running';
+        buzz(14);
+    }
+    paintClock(); renderActive();
+}
+$('btn-run').addEventListener('click', toggleTimer);
+
+let sheetCb = null;
+function askSheet(title, body, yesLabel, cb){
+    $('sheet-title').textContent = title;
+    $('sheet-body').textContent = body;
+    $('sheet-yes').textContent = yesLabel;
+    sheetCb = cb;
+    $('scrim').classList.add('show');
+}
+function closeSheet(){ $('scrim').classList.remove('show'); sheetCb = null; }
+$('sheet-no').addEventListener('click', closeSheet);
+$('scrim').addEventListener('click', e => { if (e.target === $('scrim')) closeSheet(); });
+$('sheet-yes').addEventListener('click', () => { const cb = sheetCb; closeSheet(); if (cb) cb(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+function doReset(){
+    running = false;
+    document.body.dataset.running = '0';
+    cancelAnimationFrame(raf);
+    elapsed = 0; active = []; finished = []; lastAction = null; filterQ = '';
+    $('live').style.display = 'none';
+    $('setup').style.display = 'block';
+    $('topbar-meta').textContent = 'Race timer';
+    syncCTA(); window.scrollTo(0, 0);
+}
+$('btn-reset').addEventListener('click', () => {
+    const dirty = finished.length > 0 || active.some(r => r.idx > 0) || running || elapsed > 0;
+    if (!dirty){ doReset(); return; }
+    askSheet('Reset the race?', 'Every split recorded so far will be cleared. This cannot be undone.', 'Reset race', doReset);
+});
+
+const now = () => running ? elapsed + (Date.now() - t0) : elapsed;
+
+function hit(id){
+    if (!running && elapsed === 0){ toast('Start the clock first'); return; }
+    const i = active.findIndex(r => r.id === id);
+    if (i < 0) return;
+    const r = active[i];
+    const time = now();
+    const dist = checkpoints[r.idx];
+
+    r.splits.push({ dist, time });
+    r.idx++;
+    lastAction = { id, wasFinish: false, pos: i };
+
+    if (r.idx >= checkpoints.length){
+        r.finish = time;
+        active.splice(i, 1);
+        finished.unshift(r);
+        lastAction.wasFinish = true;
+        toast(`${r.name} — ${fmtMs(time)}`);
+        buzz([12, 40, 12]);
+    } else {
+        active.push(active.splice(i, 1)[0]);
+        buzz(12);
+    }
+    renderActive(); renderResults(); renderUndo();
+}
+$('active-list').addEventListener('click', e => {
+    const c = e.target.closest('.lane-card');
+    if (!c || c.disabled) return;
+    hit(+c.dataset.rid);
+});
+
+function undo(){
+    if (!lastAction) return;
+    let r;
+    if (lastAction.wasFinish){
+        r = finished.shift();
+        if (!r){ lastAction = null; renderUndo(); return; }
+        delete r.finish;
+        active.splice(Math.min(lastAction.pos, active.length), 0, r);
+    } else {
+        const cur = active.findIndex(x => x.id === lastAction.id);
+        if (cur < 0){ lastAction = null; renderUndo(); return; }
+        r = active.splice(cur, 1)[0];
+        active.splice(Math.min(lastAction.pos, active.length), 0, r);
+    }
+    r.splits.pop(); r.idx--;
+    lastAction = null;
+    renderActive(); renderResults(); renderUndo();
+    toast('Split removed');
+}
+function renderUndo(){
+    const slot = $('undo-slot');
+    if (!lastAction){ slot.innerHTML = ''; return; }
+    const r = lastAction.wasFinish ? finished[0] : active.find(x => x.id === lastAction.id);
+    if (!r || !r.splits.length){ slot.innerHTML = ''; return; }
+    const last = r.splits[r.splits.length - 1];
+    slot.innerHTML = `<div class="undo-bar">
+        <span>Logged <strong style="color:var(--text)">${esc(r.name)}</strong> · ${cpLabel(last.dist)} · ${fmtMs(last.time)}</span>
+        <button id="btn-undo">Undo</button>
+    </div>`;
+    $('btn-undo').addEventListener('click', undo);
+}
+
+$('filter-input').addEventListener('input', e => { filterQ = e.target.value.trim().toLowerCase(); renderActive(); });
+$('filter-clear').addEventListener('click', () => { filterQ = ''; $('filter-input').value = ''; $('filter-input').blur(); renderActive(); });
+
+function renderActive(){
+    const list = $('active-list');
+    $('count-active').textContent = active.length;
+    $('active-empty').style.display = (active.length === 0 && finished.length > 0) ? 'block' : 'none';
+    $('filter-bar').style.display = active.length >= 7 ? 'flex' : 'none';
+
+    const nd = $('next-due');
+    if (active.length){
+        const minIdx = Math.min(...active.map(r => r.idx));
+        nd.style.display = 'inline-block';
+        nd.textContent = `NEXT · ${cpLabel(checkpoints[minIdx])}`;
+    } else nd.style.display = 'none';
+
+    const armed = running || elapsed > 0;
+    const shown = filterQ ? active.filter(r => r.name.toLowerCase().includes(filterQ)) : active;
+
+    if (filterQ && !shown.length){
+        list.innerHTML = `<div class="empty">No athlete matches "${esc(filterQ)}".</div>`;
+        return;
+    }
+
+    list.innerHTML = shown.map(r => {
+        const cp = checkpoints[r.idx];
+        const done = r.idx > 0 ? r.splits[r.idx - 1] : null;
+        const pct = done ? Math.min(100, (done.dist / raceDist) * 100) : 0;
+
+        let stats = `<span>At the line</span>`;
+        if (done && done.time > 0){
+            const perMile = done.time / done.dist;
+            stats = `<span><b>${fmtMs(perMile, false)}</b>/mi</span>
+                     <span><b class="hot">${fmtMs(perMile * raceDist, false)}</b> proj</span>
+                     <span>${cpLabel(done.dist)} ${fmtMs(done.time)}</span>`;
         }
+        const isFinal = r.idx === checkpoints.length - 1;
+        return `<button class="lane-card" data-rid="${r.id}" ${armed ? '' : 'disabled'}>
+            <span class="lane-prog" style="width:${pct}%"></span>
+            <span class="lane-inner">
+                <span class="lane-left">
+                    <span class="lane-name">${esc(r.name)}</span>
+                    <span class="lane-stats">${stats}</span>
+                </span>
+                <span class="lane-hit ${isFinal ? 'final' : ''}">
+                    ${armed ? (isFinal ? 'FINISH' : 'LOG') : '—'}
+                    <small>${armed ? cpLabel(cp) : 'start clock'}</small>
+                </span>
+            </span>
+        </button>`;
+    }).join('');
+
+    if (active.length === 0 && finished.length > 0 && running) toggleTimer();
+}
+
+function renderResults(){
+    const list = $('result-list');
+    $('count-fin').textContent = finished.length;
+    $('result-empty').style.display = finished.length ? 'none' : 'block';
+    list.innerHTML = finished.map((r, i) => {
+        const place = finished.length - i;
+        let prev = 0;
+        const cells = r.splits.map(s => {
+            const lap = s.time - prev; prev = s.time;
+            return `<div class="split-cell">
+                <div class="split-k">${cpShort(s.dist)}</div>
+                <div class="split-v">${fmtMs(s.time, false)}</div>
+                <div class="split-lap">+${fmtMs(lap, false)}</div>
+            </div>`;
+        }).join('');
+        return `<div class="result" data-place="${place}">
+            <div class="result-top">
+                <span class="place">${place}</span>
+                <span class="result-name">${esc(r.name)}</span>
+                <span class="result-time">${fmtMs(r.finish)}</span>
+            </div>
+            <div class="splits-strip">${cells}</div>
+        </div>`;
+    }).join('');
+}
+
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && running){ cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); }
+    paintClock();
+});
+document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && document.body.dataset.view === 'timer' && liveOn()
+        && !['INPUT','TEXTAREA','BUTTON'].includes(e.target.tagName)
+        && !$('scrim').classList.contains('show')){
+        e.preventDefault(); toggleTimer();
     }
+});
+window.addEventListener('beforeunload', e => {
+    if (running || finished.length || active.some(r => r.idx > 0)){ e.preventDefault(); e.returnValue = ''; }
+});
 
-
-    // --- PACE CALCULATOR ---
-    let paceUnit = 'mile';
-    const paceSlider = document.getElementById('pace-slider');
-    const paceTextInput = document.getElementById('pace-value-display');
-    
-    // Distances relative to the selected unit
-    const distances = {
-        mile: {
-            '400m': 0.248548, '800m': 0.497097, '1600m': 0.994194, '3200m': 1.98839,
-            '5k': 3.10686, '10k': 6.21371, 'half': 13.1094, 'full': 26.2188
-        },
-        km: {
-            '400m': 0.4, '800m': 0.8, '1600m': 1.6, '3200m': 3.2,
-            '5k': 5.0, '10k': 10.0, 'half': 21.0975, 'full': 42.195
-        }
-    };
-
-    function setPaceUnit(unit) {
-        paceUnit = unit;
-        document.getElementById('btn-mile').classList.toggle('active', unit === 'mile');
-        document.getElementById('btn-km').classList.toggle('active', unit === 'km');
-        document.getElementById('pace-unit-display').innerText = `/ ${unit}`;
-
-        if (unit === 'mile') {
-            paceSlider.min = 240; // 4:00/mi
-            paceSlider.max = 720; // 12:00/mi
-            paceSlider.value = 375; // default 6:15
-        } else {
-            paceSlider.min = 150; // 2:30/km
-            paceSlider.max = 450; // 7:30/km
-            paceSlider.value = 230; // default 3:50
-        }
-        updatePacePredictions();
-    }
-
-    function formatSeconds(totalSeconds, includeHours = false) {
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        const s = Math.floor(totalSeconds % 60);
-
-        const padS = s.toString().padStart(2, '0');
-        const padM = m.toString().padStart(2, '0');
-
-        if (h > 0 || includeHours) {
-            return `${h}:${padM}:${padS}`;
-        }
-        return `${m}:${padS}`;
-    }
-
-    // Parse manual text input for pace (e.g., "6:15" or "615")
-    function handlePaceTextInput(e) {
-        let val = e.target.value.replace(/[^\d:]/g, ''); // strip invalid chars
-        let totalSec = null;
-
-        if (val.includes(':')) {
-            let parts = val.split(':');
-            let m = parseInt(parts[0] || 0);
-            let s = parseInt(parts[1] || 0);
-            if (!isNaN(m) && !isNaN(s)) {
-                totalSec = m * 60 + s;
-            }
-        } else if (val.length > 0) {
-            let num = parseInt(val);
-            if (num < 100) {
-                totalSec = num * 60; // Just minutes typed
-            } else {
-                let m = Math.floor(num / 100);
-                let s = num % 100;
-                totalSec = m * 60 + s;
-            }
-        }
-
-        if (totalSec !== null) {
-            // Clamp value to slider constraints
-            totalSec = Math.max(parseInt(paceSlider.min), Math.min(parseInt(paceSlider.max), totalSec));
-            paceSlider.value = totalSec;
-        }
-        
-        // Update view
-        updatePacePredictions();
-    }
-
-    // +/- Button logic
-    function adjustPace(amount) {
-        let current = parseInt(paceSlider.value);
-        let next = current + amount;
-        next = Math.max(parseInt(paceSlider.min), Math.min(parseInt(paceSlider.max), next));
-        paceSlider.value = next;
-        updatePacePredictions();
-    }
-
-    function updatePacePredictions() {
-        const secondsPerUnit = parseInt(paceSlider.value, 10);
-        
-        // Update input box display directly
-        paceTextInput.value = formatSeconds(secondsPerUnit);
-
-        const distData = distances[paceUnit];
-        
-        document.getElementById('pred-400m').innerText = formatSeconds(secondsPerUnit * distData['400m']);
-        document.getElementById('pred-800m').innerText = formatSeconds(secondsPerUnit * distData['800m']);
-        document.getElementById('pred-1600m').innerText = formatSeconds(secondsPerUnit * distData['1600m']);
-        document.getElementById('pred-3200m').innerText = formatSeconds(secondsPerUnit * distData['3200m']);
-        document.getElementById('pred-5k').innerText = formatSeconds(secondsPerUnit * distData['5k'], true);
-        document.getElementById('pred-10k').innerText = formatSeconds(secondsPerUnit * distData['10k'], true);
-        document.getElementById('pred-half').innerText = formatSeconds(secondsPerUnit * distData['half'], true);
-        document.getElementById('pred-full').innerText = formatSeconds(secondsPerUnit * distData['full'], true);
-    }
-
-    paceSlider.addEventListener('input', updatePacePredictions);
-    updatePacePredictions(); // Initial run
-
-
-    // --- RACE TIMER ---
-    let pendingRunners = [];
-    let activeRunners = [];
-    let finishedRunners = [];
-    let runnerIdCounter = 0;
-
-    let timerStartTime = 0;
-    let timerElapsedTime = 0;
-    let timerInterval = null;
-    let isTimerRunning = false;
-    
-    // Variables for tracking race distance and checkpoints
-    let activeRaceDistance = 1;
-    let raceCheckpoints = [];
-
-    function handleRunnerInputKeyPress(e) {
-        if (e.key === 'Enter') {
-            addRunner();
-        }
-    }
-
-    function addRunner() {
-        const input = document.getElementById('new-runner-name');
-        const name = input.value.trim();
-        if (name) {
-            pendingRunners.push({ id: runnerIdCounter++, name: name });
-            input.value = '';
-            renderSetupRunners();
-        }
-    }
-
-    function removePendingRunner(id) {
-        pendingRunners = pendingRunners.filter(r => r.id !== id);
-        renderSetupRunners();
-    }
-
-    function renderSetupRunners() {
-        const list = document.getElementById('setup-runner-list');
-        list.innerHTML = '';
-        
-        pendingRunners.forEach(runner => {
-            const div = document.createElement('div');
-            div.className = 'runner-list-item glass';
-            div.innerHTML = `
-                <span>${runner.name}</span>
-                <button class="remove-runner" onclick="removePendingRunner(${runner.id})">✕</button>
-            `;
-            list.appendChild(div);
-        });
-
-        const startBtn = document.getElementById('start-race-btn');
-        if (pendingRunners.length > 0) {
-            startBtn.style.display = 'block';
-        } else {
-            startBtn.style.display = 'none';
-        }
-    }
-
-    function generateCheckpoints(dist, interval) {
-        let pts = [];
-        let current = interval;
-        
-        // Handle float math avoiding precision issues
-        while (current < dist - 0.05) { 
-            // Rule: For 5ks, never have a split at the 3 mile mark
-            if (Math.abs(dist - 3.10686) < 0.01 && Math.abs(current - 3.0) < 0.01) {
-                current += interval;
-                continue;
-            }
-            pts.push(parseFloat(current.toFixed(2)));
-            current += interval;
-        }
-        
-        pts.push(dist); // The finish line
-        return pts;
-    }
-
-    function startRaceScreen() {
-        const meetName = document.getElementById('meet-name').value.trim() || 'Race Timer';
-        document.getElementById('active-meet-name').innerText = meetName;
-        
-        activeRaceDistance = parseFloat(document.getElementById('race-distance').value);
-        const splitInterval = parseFloat(document.getElementById('split-interval').value);
-        
-        raceCheckpoints = generateCheckpoints(activeRaceDistance, splitInterval);
-        
-        // Copy pending to active, initialize split tracking
-        activeRunners = pendingRunners.map(r => ({
-            ...r,
-            splits: [],
-            currentSplitIndex: 0
-        }));
-        finishedRunners = [];
-        
-        // Reset timer state
-        timerElapsedTime = 0;
-        isTimerRunning = false;
-        clearInterval(timerInterval);
-        document.getElementById('main-timer').innerText = '00:00:00.0';
-        document.getElementById('btn-timer-start').innerText = 'Start';
-        document.getElementById('btn-timer-start').className = 'btn-success';
-        
-        renderActiveRunners();
-        renderFinishedRunners();
-
-        document.getElementById('timer-setup').style.display = 'none';
-        document.getElementById('timer-active').style.display = 'block';
-    }
-
-    function formatRaceTime(ms) {
-        const totalDeci = Math.floor(ms / 100);
-        const dec = totalDeci % 10;
-        const totalSec = Math.floor(ms / 1000);
-        const s = totalSec % 60;
-        const m = Math.floor(totalSec / 60) % 60;
-        const h = Math.floor(totalSec / 3600);
-
-        const padS = s.toString().padStart(2, '0');
-        const padM = m.toString().padStart(2, '0');
-        const padH = h.toString().padStart(2, '0');
-
-        if (h > 0) return `${padH}:${padM}:${padS}.${dec}`;
-        return `${padM}:${padS}.${dec}`;
-    }
-
-    function timerLoop() {
-        if (!isTimerRunning) return;
-        const now = Date.now();
-        timerElapsedTime += (now - timerStartTime);
-        timerStartTime = now;
-        document.getElementById('main-timer').innerText = formatRaceTime(timerElapsedTime);
-        requestAnimationFrame(timerLoop);
-    }
-
-    function toggleTimer() {
-        const btn = document.getElementById('btn-timer-start');
-        if (isTimerRunning) {
-            isTimerRunning = false;
-            btn.innerText = 'Resume';
-            btn.className = 'btn-success';
-        } else {
-            isTimerRunning = true;
-            timerStartTime = Date.now();
-            requestAnimationFrame(timerLoop);
-            btn.innerText = 'Pause';
-            btn.className = 'btn-secondary';
-        }
-    }
-
-    function resetTimer() {
-        isTimerRunning = false;
-        timerElapsedTime = 0;
-        document.getElementById('main-timer').innerText = '00:00:00.0';
-        const btn = document.getElementById('btn-timer-start');
-        btn.innerText = 'Start';
-        btn.className = 'btn-success';
-
-        document.getElementById('timer-active').style.display = 'none';
-        document.getElementById('timer-setup').style.display = 'block';
-    }
-
-    function recordSplit(id) {
-        if (!isTimerRunning && timerElapsedTime === 0) return; // Prevent recording if not started
-        
-        const runnerIndex = activeRunners.findIndex(r => r.id === id);
-        if (runnerIndex > -1) {
-            let exactTime = timerElapsedTime;
-            if(isTimerRunning) {
-                exactTime += (Date.now() - timerStartTime);
-            }
-
-            const runner = activeRunners[runnerIndex];
-            const currentDistance = raceCheckpoints[runner.currentSplitIndex];
-            
-            // Record split
-            runner.splits.push({ distance: currentDistance, time: exactTime });
-            runner.currentSplitIndex++;
-            
-            // Check if finished
-            if (runner.currentSplitIndex >= raceCheckpoints.length) {
-                runner.finishTime = exactTime;
-                activeRunners.splice(runnerIndex, 1);
-                finishedRunners.unshift(runner);
-            } else {
-                // Move runner to bottom of active list so next runner surfaces
-                const r = activeRunners.splice(runnerIndex, 1)[0];
-                activeRunners.push(r);
-            }
-            
-            renderActiveRunners();
-            renderFinishedRunners();
-        }
-    }
-
-    function getCheckpointLabel(dist) {
-        if (Math.abs(dist - activeRaceDistance) < 0.01) return "Finish";
-        return `${dist} mi`;
-    }
-
-    function renderActiveRunners() {
-        const list = document.getElementById('active-runners-list');
-        list.innerHTML = '';
-        
-        activeRunners.forEach(runner => {
-            const btn = document.createElement('div');
-            btn.className = 'runner-btn glass';
-            
-            const cp = raceCheckpoints[runner.currentSplitIndex];
-            const cpLabel = getCheckpointLabel(cp);
-            
-            let splitText = "Waiting to start...";
-            
-            // If they have completed at least one split, calculate pace and projection
-            if (runner.currentSplitIndex > 0) {
-                const lastSplit = runner.splits[runner.currentSplitIndex - 1];
-                const pacePerMile = lastSplit.time / lastSplit.distance;
-                const projTime = pacePerMile * activeRaceDistance;
-                splitText = `Pace: ${formatRaceTime(pacePerMile)}/mi | Proj: ${formatRaceTime(projTime)}`;
-            }
-
-            btn.innerHTML = `
-                <div class="runner-info-row">
-                    <span class="runner-name">${runner.name}</span>
-                    <span class="runner-split-info">${splitText}</span>
-                </div>
-                <div class="runner-action-row">
-                    <button class="runner-action-btn" onclick="recordSplit(${runner.id})">
-                        Record ${cpLabel}
-                    </button>
-                </div>
-            `;
-            list.appendChild(btn);
-        });
-
-        if(activeRunners.length === 0 && finishedRunners.length > 0 && isTimerRunning) {
-             toggleTimer(); // Auto pause when everyone finishes
-        }
-    }
-
-    function renderFinishedRunners() {
-        const list = document.getElementById('finished-runners-list');
-        list.innerHTML = '';
-        
-        finishedRunners.forEach((runner, index) => {
-            const div = document.createElement('div');
-            div.className = 'finished-item glass';
-            
-            let splitsHtml = runner.splits.map(s => {
-                let label = getCheckpointLabel(s.distance);
-                return `<span>${label}: ${formatRaceTime(s.time)}</span>`;
-            }).join(' | ');
-
-            div.innerHTML = `
-                <div class="finished-item-header">
-                    <span>${finishedRunners.length - index}. ${runner.name}</span>
-                    <span class="finished-item-time">${formatRaceTime(runner.finishTime)}</span>
-                </div>
-                <div class="finished-splits">${splitsHtml}</div>
-            `;
-            list.appendChild(div);
-        });
-    }
-
-    function exportResults() {
-        if (finishedRunners.length === 0) {
-            console.log('No finished runners to export.');
-            return;
-        }
-
-        // Build CSV columns dynamically based on checkpoints
-        let csvContent = "data:text/csv;charset=utf-8,Place,Runner,";
-        
-        // Add headers for each split
-        raceCheckpoints.forEach(cp => {
-            csvContent += `Split (${getCheckpointLabel(cp)}),`;
-        });
-        csvContent += "Final Time\n";
-        
-        const exportList = [...finishedRunners].reverse(); // 1st place first
-        
-        exportList.forEach((runner, index) => {
-            let row = `${index + 1},"${runner.name}",`;
-            
-            // Map recorded splits to columns
-            let splitStrings = raceCheckpoints.map(cp => {
-                // Find matching split distance
-                let split = runner.splits.find(s => Math.abs(s.distance - cp) < 0.01);
-                return split ? formatRaceTime(split.time) : "-";
-            });
-            
-            row += splitStrings.join(',') + `,${formatRaceTime(runner.finishTime)}\n`;
-            csvContent += row;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "race_results_splits.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
+renderRoster();
+go('timer');
 </script>
 </body>
 </html>
